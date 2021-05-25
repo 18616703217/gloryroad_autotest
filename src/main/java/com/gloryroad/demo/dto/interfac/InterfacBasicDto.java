@@ -2,6 +2,9 @@ package com.gloryroad.demo.dto.interfac;
 
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
 
+/**
+ * 用户页面展示对象
+ */
 public class InterfacBasicDto extends InterfacBasic {
     private String groupName;
     private String createUserName;

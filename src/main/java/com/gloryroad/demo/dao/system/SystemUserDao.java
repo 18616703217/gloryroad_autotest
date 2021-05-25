@@ -2,6 +2,7 @@ package com.gloryroad.demo.dao.system;
 
 import com.gloryroad.demo.Vo.PageModel;
 import com.gloryroad.demo.Vo.system.SystemUserQueryVo;
+import com.gloryroad.demo.constant.GloryRoadEnum;
 import com.gloryroad.demo.entity.system.SystemUser;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,7 @@ public class SystemUserDao {
 
         String sql = "insert into system_user(account, name, role, groupSign, groupId, mail, createTime) " +
                 "values('%s','%s','%s','%s',%s,'%s',%s)";
-        sql = String.format(sql, systemUser.getAccount(), systemUser.getName(), systemUser.getRole(),
+        sql = String.format(sql, systemUser.getAccount(), systemUser.getName(), systemUser.getRole().getRoleName(),
                 systemUser.getGroupSign(), systemUser.getGroupId(), systemUser.getMail(), systemUser.getCreateTime());
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
@@ -81,14 +82,14 @@ public class SystemUserDao {
 
         String sql = "update system_user set createtime=" + systemUser.getCreateTime();
         if (systemUser.getMail() != null){
-            sql += ",mail=" + systemUser.getMail();
+            sql += ",mail='" + systemUser.getMail() + "'";
         }
         if (systemUser.getGroupSign() != null){
             sql += ",group_sign='" + systemUser.getGroupSign() + "'";
             sql += ",group_id=" + systemUser.getId();
         }
         if(systemUser.getRole() != null){
-            sql += ",role='" + systemUser.getRole() + "'";
+            sql += ",role='" + systemUser.getRole().getRoleName() + "'";
         }
         if(systemUser.getName() != null){
             sql += ",name='" + systemUser.getName() + "'";
@@ -119,7 +120,7 @@ public class SystemUserDao {
             systemUser.setId((Integer) map.get("id"));
             systemUser.setAccount((String) map.get("account"));
             systemUser.setName((String) map.get("name"));
-            systemUser.setRole((String) map.get("role"));
+            systemUser.setRole(GloryRoadEnum.Role.getRole((String) map.get("role")));
             systemUser.setGroupSign((String) map.get("group_sign"));
             systemUser.setGroupId((Integer) map.get("group_id"));
             systemUser.setMail((String) map.get("mail"));

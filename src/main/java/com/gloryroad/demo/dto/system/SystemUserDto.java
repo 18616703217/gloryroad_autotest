@@ -2,10 +2,9 @@ package com.gloryroad.demo.dto.system;
 
 import com.gloryroad.demo.entity.system.SystemUser;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+/**
+ * 用户页面展示对象
+ */
 public class SystemUserDto extends SystemUser {
     private String groupName;
 

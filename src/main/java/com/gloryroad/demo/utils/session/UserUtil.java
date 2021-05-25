@@ -1,5 +1,6 @@
 package com.gloryroad.demo.utils.session;
 
+import com.gloryroad.demo.constant.GloryRoadEnum;
 import com.gloryroad.demo.dao.session.IUserDao;
 import com.gloryroad.demo.dao.system.SystemUserDao;
 import com.gloryroad.demo.entity.session.BuiltInUser;
@@ -63,7 +64,7 @@ public class UserUtil {
         ((BuiltInUser) user).setAccount("wenqiz");
         ((BuiltInUser) user).setMail("wenqiz@tujia.com");
         ((BuiltInUser) user).setName("张闻棋");
-        ((BuiltInUser) user).setRole("测试");
+        ((BuiltInUser) user).setRole(GloryRoadEnum.Role.TEST);
         return user;
     }
 }

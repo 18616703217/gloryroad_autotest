@@ -1,6 +1,8 @@
 package com.gloryroad.demo.entity.system;
 
 
+import com.gloryroad.demo.constant.GloryRoadEnum;
+
 /**
  * 系统用户实体类
  */
@@ -8,7 +10,7 @@ public class SystemUser{
     private Integer id;
     private String account;
     private String name;
-    private String role;
+    private GloryRoadEnum.Role role;
     private String groupSign;
     private Integer groupId;
     private String mail;
@@ -49,11 +51,11 @@ public class SystemUser{
         this.status = status;
     }
 
-    public String getRole() {
+    public GloryRoadEnum.Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(GloryRoadEnum.Role role) {
         this.role = role;
     }
 

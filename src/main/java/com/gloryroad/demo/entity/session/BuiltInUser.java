@@ -1,5 +1,7 @@
 package com.gloryroad.demo.entity.session;
 
+import com.gloryroad.demo.constant.GloryRoadEnum;
+
 import java.util.Map;
 
 public class BuiltInUser implements IUser{
@@ -8,7 +10,7 @@ public class BuiltInUser implements IUser{
     /** 真实姓名 */
     private String name;
     /** 员工职位 */
-    private String role;
+    private GloryRoadEnum.Role role;
     /** 员工部门 */
     private String department;
     /** 邮箱 */
@@ -34,7 +36,12 @@ public class BuiltInUser implements IUser{
         this.name = name;
     }
 
-    public void setRole(String role) {
+    @Override
+    public GloryRoadEnum.Role getRole() {
+        return role;
+    }
+
+    public void setRole(GloryRoadEnum.Role role) {
         this.role = role;
     }
 
@@ -45,11 +52,6 @@ public class BuiltInUser implements IUser{
 
     public void setMail(String mail) {
         this.mail = mail;
-    }
-
-    @Override
-    public String getRole() {
-        return role;
     }
 
 

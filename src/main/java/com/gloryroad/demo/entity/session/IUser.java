@@ -1,5 +1,7 @@
 package com.gloryroad.demo.entity.session;
 
+import com.gloryroad.demo.constant.GloryRoadEnum;
+
 import java.util.Map;
 
 public interface IUser {
@@ -13,7 +15,7 @@ public interface IUser {
     /** 真实姓名 */
     public String getName();
     /** 员工职位 */
-    public String getRole();
+    public GloryRoadEnum.Role getRole();
     /** 员工部门 */
     public String getDepartment();
     /** 邮箱 */

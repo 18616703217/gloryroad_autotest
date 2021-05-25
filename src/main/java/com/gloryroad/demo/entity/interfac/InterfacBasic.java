@@ -18,6 +18,8 @@ public class InterfacBasic {
     private Integer groupId;
     /** 请求方法 */
     private GloryRoadEnum.CaseSubMethod methodType;
+    /** 请求主体 */
+    private GloryRoadEnum.CaseBodyType bodyType;
     /** 请求header数据 */
     private JSONObject interfacHeaderData;
     /** 请求form数据 */
@@ -111,6 +113,14 @@ public class InterfacBasic {
 
     public void setCreateAccount(String createAccount) {
         this.createAccount = createAccount;
+    }
+
+    public GloryRoadEnum.CaseBodyType getBodyType() {
+        return bodyType;
+    }
+
+    public void setBodyType(GloryRoadEnum.CaseBodyType bodyType) {
+        this.bodyType = bodyType;
     }
 
     public Integer getStatus() {

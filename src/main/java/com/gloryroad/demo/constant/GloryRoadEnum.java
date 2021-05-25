@@ -39,6 +39,15 @@ public class GloryRoadEnum {
             return list;
         }
 
+        public static Role getRole(String value) {
+            for (Role role : Role.values()){
+                if(StringUtil.isNotBlank(value) && value.equals(role.getRoleName())){
+                    return role;
+                }
+            }
+            return null;
+        }
+
         /** 输出角色*/
         private String name;
 
@@ -86,6 +95,36 @@ public class GloryRoadEnum {
             for (CaseSubMethod caseSubMethod : CaseSubMethod.values()){
                 if(StringUtil.isNotBlank(value) && value.equals(caseSubMethod.getValue())){
                     return caseSubMethod;
+                }
+            }
+            return null;
+        }
+
+    }
+
+    /**
+     * http请求主体类型（json, form）
+     */
+    public static enum CaseBodyType {
+
+        JSON("JSON"),
+        FORM("FORM");
+
+
+        private final String value;
+
+        CaseBodyType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static CaseBodyType getCaseBodyType(String value) {
+            for (CaseBodyType caseBodyType : CaseBodyType.values()){
+                if(StringUtil.isNotBlank(value) && value.equals(caseBodyType.getValue())){
+                    return caseBodyType;
                 }
             }
             return null;

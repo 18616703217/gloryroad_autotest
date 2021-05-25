@@ -1,8 +1,10 @@
 package com.gloryroad.demo.dao.interfac;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gloryroad.demo.Vo.PageModel;
-import com.gloryroad.demo.Vo.system.SystemUserQueryVo;
-import com.gloryroad.demo.entity.system.SystemUser;
+import com.gloryroad.demo.Vo.interfac.InterfacBasicQueryVo;
+import com.gloryroad.demo.constant.GloryRoadEnum;
+import com.gloryroad.demo.entity.interfac.InterfacBasic;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,92 +20,101 @@ public class InterfacBasicDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // 查询用户通过id
-    public PageModel<SystemUser> getSystemUserById(PageModel<SystemUser> page, Integer id){
-        String sql = String.format("SELECT * FROM system_user where id = %s and status = 0;", id);
+    // 查询接口信息通过id
+    public PageModel<InterfacBasic> getInterfacBasicById(PageModel<InterfacBasic> page, Integer id){
+        String sql = String.format("SELECT * FROM interfac_basic where id = %s and status = 0;", id);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
         System.out.println(list);
-        List<SystemUser> systemUserList = mappingObject(list);
-        page.setResult(systemUserList);
+        List<InterfacBasic> interfacBasicList = mappingObject(list);
+        page.setResult(interfacBasicList);
         return page;
     }
 
-    // 查询用户通过条件
-    public List<SystemUser> checkSystemUser(String account, String passwd){
+    // 查询接口信息通过条件
+    public PageModel<InterfacBasic> getInterfacBasics(PageModel<InterfacBasic> page, InterfacBasicQueryVo interfacBasicQueryVo){
+        int pageNo = interfacBasicQueryVo.getPageNo();
+        int pageSize = interfacBasicQueryVo.getPageSize();
 
-        String sql = "SELECT * FROM system_user where status = 0"
-                + " and account = '"+ account +"'"
-                + " and passwd = '" + passwd +"';";
-
-
-        System.out.println("checkSystemUser sql = " + sql);
-        List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
-        List<SystemUser> systemUserList = mappingObject(list);
-        return systemUserList;
-    }
-
-    // 查询用户通过条件
-    public PageModel<SystemUser> getSystemUsers(PageModel<SystemUser> page, SystemUserQueryVo systemUserQueryVo){
-        int pageNo = systemUserQueryVo.getPageNo();
-        int pageSize = systemUserQueryVo.getPageSize();
-
-        String sql = "SELECT * FROM system_user where status = 0";
-        if (systemUserQueryVo.getAccount() != null){
-            sql += " and account like '"+ systemUserQueryVo.getAccount() +"%'";
+        String sql = "SELECT * FROM interfac_basic where status = 0";
+        if (interfacBasicQueryVo.getInterfacName() != null){
+            sql += " and interfac_name like '"+ interfacBasicQueryVo.getInterfacName() +"%'";
         }
-        if (systemUserQueryVo.getName() != null){
-            sql += " and name like '"+ systemUserQueryVo.getName() +"%'";
+        if (interfacBasicQueryVo.getCreateAccount() != null){
+            sql += " and create_account like '"+ interfacBasicQueryVo.getCreateAccount() +"%'";
+        }
+        if (interfacBasicQueryVo.getGroupId() != null){
+            sql += " and group_id = "+ interfacBasicQueryVo.getGroupId();
         }
 
-        sql += String.format(" order by %s limit %s,%s;", systemUserQueryVo.getSort(),  (pageNo-1) * pageNo, pageSize);
+        sql += String.format(" order by %s limit %s,%s;", interfacBasicQueryVo.getSort(),  (pageNo-1) * pageNo, pageSize);
         System.out.println("sql = " + sql);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
-        List<SystemUser> systemUserList = mappingObject(list);
-        page.setResult(systemUserList);
+        List<InterfacBasic> interfacBasicList = mappingObject(list);
+        page.setResult(interfacBasicList);
         return page;
     }
 
-    // 插入用户
-    public int insertSystemUsers(SystemUser systemUser){
+    // 插入接口信息
+    public int insertInterfacBasic(InterfacBasic interfacBasic){
 
-        String sql = "insert into system_user(account, name, role, groupSign, groupId, mail, createTime) " +
-                "values('%s','%s','%s','%s',%s,'%s',%s)";
-        sql = String.format(sql, systemUser.getAccount(), systemUser.getName(), systemUser.getRole(),
-                systemUser.getGroupSign(), systemUser.getGroupId(), systemUser.getMail(), systemUser.getCreateTime());
+        String sql = "insert into interfac_basic(interfac_name, remark, group_id, create_account, method_type, body_type" +
+                "interfac_form_data, interfac_json_data, interfac_query_data, interfac_header_data, createTime) " +
+                "values('%s','%s',%s,'%s','%s','%s','%s','%s','%s','%s',%s)";
+        
+        sql = String.format(sql, interfacBasic.getInterfacName(), interfacBasic.getRemark(),
+                interfacBasic.getGroupId(), interfacBasic.getCreateAccount(), interfacBasic.getMethodType().getValue(),
+                interfacBasic.getBodyType().getValue(), interfacBasic.getInterfacFormData().toJSONString(),
+                interfacBasic.getInterfacJsonData().toJSONString(), interfacBasic.getInterfacQueryData().toJSONString(),
+                interfacBasic.getInterfacHeaderData().toJSONString(), interfacBasic.getCreateTime());
+        
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
         return actionNum;
     }
 
-    // 更改用户
-    public int updateSystemUsers(SystemUser systemUser){
+    // 更改接口信息
+    public int updateInterfacBasic(InterfacBasic interfacBasic){
 
-        String sql = "update system_user set createtime=" + systemUser.getCreateTime();
-        if (systemUser.getMail() != null){
-            sql += ",mail=" + systemUser.getMail();
+        String sql = "update interfac_basic set createtime=" + interfacBasic.getCreateTime();
+        if (interfacBasic.getInterfacName() != null){
+            sql += ",interfac_name='" + interfacBasic.getInterfacName() + "'";
         }
-        if (systemUser.getGroupSign() != null){
-            sql += ",group_sign='" + systemUser.getGroupSign() + "'";
-            sql += ",group_id=" + systemUser.getId();
+        if (interfacBasic.getRemark() != null){
+            sql += ",remark='" + interfacBasic.getRemark() + "'";
         }
-        if(systemUser.getRole() != null){
-            sql += ",role='" + systemUser.getRole() + "'";
+        if (interfacBasic.getInterfacFormData() != null){
+            sql += ",interfac_form_data='" + interfacBasic.getInterfacFormData().toJSONString() + "'";
         }
-        if(systemUser.getName() != null){
-            sql += ",name='" + systemUser.getName() + "'";
+        if (interfacBasic.getInterfacJsonData() != null){
+            sql += ",interfac_json_data='" + interfacBasic.getInterfacJsonData().toJSONString() + "'";
         }
-        sql += " where id = " + systemUser.getId() + ";";
+        if (interfacBasic.getInterfacQueryData() != null){
+            sql += ",interfac_query_data='" + interfacBasic.getInterfacQueryData().toJSONString() + "'";
+        }
+        if (interfacBasic.getInterfacHeaderData() != null){
+            sql += ",interfac_header_data='" + interfacBasic.getInterfacHeaderData().toJSONString() + "'";
+        }
+        if (interfacBasic.getMethodType() != null){
+            sql += ",method_type='" + interfacBasic.getMethodType().getValue() + "'";
+        }
+        if (interfacBasic.getBodyType() != null){
+            sql += ",body_type='" + interfacBasic.getBodyType().getValue() + "'";
+        }
+        if (interfacBasic.getGroupId() != null){
+            sql += ",group_id=" + interfacBasic.getGroupId();
+        }
+        sql += " where id = " + interfacBasic.getId() + ";";
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
         return actionNum;
     }
 
-    // 删除用户
-    public int deleteSystemUsers(String[] ids){
+    // 删除接口信息
+    public int deleteInterfacBasics(String[] ids){
 
-        String sql = "update system_user set status=1 where id in (%s);";
+        String sql = "update interfac_basic set status=1 where id in (%s);";
         String.format(sql, Joiner.on(',').join(ids));
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
@@ -112,22 +123,25 @@ public class InterfacBasicDao {
     }
 
     // 数据库对象和数据库查询结果映射
-    private static List<SystemUser> mappingObject(List<Map<String,Object>> list){
-        List<SystemUser> systemUserList = new LinkedList<>();
+    private static List<InterfacBasic> mappingObject(List<Map<String,Object>> list){
+        List<InterfacBasic> interfacBasicList = new LinkedList<>();
         for(Map<String,Object> map: list){
-            SystemUser systemUser = new SystemUser();
-            systemUser.setId((Integer) map.get("id"));
-            systemUser.setAccount((String) map.get("account"));
-            systemUser.setName((String) map.get("name"));
-            systemUser.setRole((String) map.get("role"));
-            systemUser.setGroupSign((String) map.get("group_sign"));
-            systemUser.setGroupId((Integer) map.get("group_id"));
-            systemUser.setMail((String) map.get("mail"));
-            systemUser.setStatus((Integer) map.get("status"));
-            systemUser.setCreateTime((Integer) map.get("createTime"));
-            systemUserList.add(systemUser);
-            System.out.println("systemUser = " + systemUser);
+            InterfacBasic interfacBasic = new InterfacBasic();
+            interfacBasic.setId((Integer) map.get("id"));
+            interfacBasic.setInterfacName((String) map.get("interfac_name"));
+            interfacBasic.setRemark((String) map.get("remark"));
+            interfacBasic.setGroupId((Integer) map.get("group_id"));
+            interfacBasic.setCreateAccount((String) map.get("create_account"));
+            interfacBasic.setMethodType(GloryRoadEnum.CaseSubMethod.getCaseSubMethod((String) map.get("method_type")));
+            interfacBasic.setBodyType(GloryRoadEnum.CaseBodyType.getCaseBodyType((String) map.get("body_type")));
+            interfacBasic.setInterfacFormData((JSONObject) map.get("interfac_form_data"));
+            interfacBasic.setInterfacJsonData((JSONObject) map.get("interfac_json_data"));
+            interfacBasic.setInterfacQueryData((JSONObject) map.get("interfac_query_data"));
+            interfacBasic.setInterfacHeaderData((JSONObject) map.get("interfac_header_data"));
+            interfacBasic.setCreateTime((long) map.get("create_time"));
+            interfacBasic.setStatus((Integer) map.get("status"));
+            System.out.println("interfacBasic = " + interfacBasic);
         }
-        return systemUserList;
+        return interfacBasicList;
     }
 }
