@@ -3,6 +3,7 @@ package com.gloryroad.demo.service.login;
 import com.gloryroad.demo.constant.ResCode;
 import com.gloryroad.demo.dao.session.IUserDao;
 import com.gloryroad.demo.dao.system.SystemUserDao;
+import com.gloryroad.demo.dto.system.SystemUserDto;
 import com.gloryroad.demo.entity.system.SystemUser;
 import com.gloryroad.demo.service.system.SystemGroupService;
 import com.gloryroad.demo.service.system.SystemUserService;
@@ -37,7 +38,7 @@ public class LoginService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        List<SystemUser> systemUsers = systemUserDao.checkSystemUser(account, passwd);
+        List<SystemUserDto> systemUsers = systemUserDao.checkSystemUser(account, passwd);
         if(systemUsers.size() == 0){
             messageMap.put("errmsg", "校验失败");
             return ResCode.C1008;

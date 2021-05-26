@@ -5,6 +5,7 @@ import com.gloryroad.demo.Vo.ResponseModel;
 import com.gloryroad.demo.Vo.system.SystemUserQueryVo;
 import com.gloryroad.demo.constant.ResCode;
 import com.gloryroad.demo.controller.base.BaseController;
+import com.gloryroad.demo.dto.system.SystemUserDto;
 import com.gloryroad.demo.entity.system.SystemUser;
 import com.gloryroad.demo.service.system.SystemUserService;
 import com.google.common.collect.Maps;
@@ -27,9 +28,9 @@ public class SystemUserController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.GET)
     @ResponseBody
-    public ResponseModel<PageModel<SystemUser>> find(SystemUserQueryVo systemUserQueryVo, HttpServletRequest request) {
+    public ResponseModel<PageModel<SystemUserDto>> find(SystemUserQueryVo systemUserQueryVo, HttpServletRequest request) {
         try {
-            PageModel<SystemUser> page = systemUserService.findSystemUsers(systemUserQueryVo, request);
+            PageModel<SystemUserDto> page = systemUserService.findSystemUsers(systemUserQueryVo, request);
             return ResponseModel.returnSuccess(page);
         }catch (Exception e){
             return ResponseModel.returnFail(ResCode.C1008, "查询用户信息失败");

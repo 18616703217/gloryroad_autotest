@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gloryroad.demo.Vo.PageModel;
 import com.gloryroad.demo.Vo.interfac.InterfacBasicQueryVo;
 import com.gloryroad.demo.constant.GloryRoadEnum;
+import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +22,16 @@ public class InterfacBasicDao {
     private JdbcTemplate jdbcTemplate;
 
     // 查询接口信息通过id
-    public PageModel<InterfacBasic> getInterfacBasicById(PageModel<InterfacBasic> page, Integer id){
+    public List<InterfacBasicDto> getInterfacBasicById(Integer id){
         String sql = String.format("SELECT * FROM interfac_basic where id = %s and status = 0;", id);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
         System.out.println(list);
-        List<InterfacBasic> interfacBasicList = mappingObject(list);
-        page.setResult(interfacBasicList);
-        return page;
+        List<InterfacBasicDto> interfacBasicList = mappingObject(list);
+        return interfacBasicList;
     }
 
     // 查询接口信息通过条件
-    public PageModel<InterfacBasic> getInterfacBasics(PageModel<InterfacBasic> page, InterfacBasicQueryVo interfacBasicQueryVo){
+    public List<InterfacBasicDto> getInterfacBasics(InterfacBasicQueryVo interfacBasicQueryVo){
         int pageNo = interfacBasicQueryVo.getPageNo();
         int pageSize = interfacBasicQueryVo.getPageSize();
 
@@ -49,9 +49,8 @@ public class InterfacBasicDao {
         sql += String.format(" order by %s limit %s,%s;", interfacBasicQueryVo.getSort(),  (pageNo-1) * pageNo, pageSize);
         System.out.println("sql = " + sql);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
-        List<InterfacBasic> interfacBasicList = mappingObject(list);
-        page.setResult(interfacBasicList);
-        return page;
+        List<InterfacBasicDto> interfacBasicList = mappingObject(list);
+        return interfacBasicList;
     }
 
     // 插入接口信息
@@ -112,7 +111,7 @@ public class InterfacBasicDao {
     }
 
     // 删除接口信息
-    public int deleteInterfacBasics(String[] ids){
+    public int deleteInterfacBasics(Integer[] ids){
 
         String sql = "update interfac_basic set status=1 where id in (%s);";
         String.format(sql, Joiner.on(',').join(ids));
@@ -123,10 +122,10 @@ public class InterfacBasicDao {
     }
 
     // 数据库对象和数据库查询结果映射
-    private static List<InterfacBasic> mappingObject(List<Map<String,Object>> list){
-        List<InterfacBasic> interfacBasicList = new LinkedList<>();
+    private static List<InterfacBasicDto> mappingObject(List<Map<String,Object>> list){
+        List<InterfacBasicDto> interfacBasicList = new LinkedList<>();
         for(Map<String,Object> map: list){
-            InterfacBasic interfacBasic = new InterfacBasic();
+            InterfacBasicDto interfacBasic = new InterfacBasicDto();
             interfacBasic.setId((Integer) map.get("id"));
             interfacBasic.setInterfacName((String) map.get("interfac_name"));
             interfacBasic.setRemark((String) map.get("remark"));
@@ -140,6 +139,7 @@ public class InterfacBasicDao {
             interfacBasic.setInterfacHeaderData((JSONObject) map.get("interfac_header_data"));
             interfacBasic.setCreateTime((long) map.get("create_time"));
             interfacBasic.setStatus((Integer) map.get("status"));
+            interfacBasicList.add(interfacBasic);
             System.out.println("interfacBasic = " + interfacBasic);
         }
         return interfacBasicList;

@@ -6,6 +6,7 @@ import com.gloryroad.demo.Vo.interfac.InterfacBasicQueryVo;
 import com.gloryroad.demo.constant.GloryRoadEnum;
 import com.gloryroad.demo.constant.ResCode;
 import com.gloryroad.demo.dao.interfac.InterfacBasicDao;
+import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
 import com.gloryroad.demo.utils.IpUtil;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -25,15 +27,21 @@ public class InterfacBasicService {
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfacBasicService.class);
 
     /** 接口信息查找 */
-    public PageModel<InterfacBasic> findInterfacBasics(InterfacBasicQueryVo interfacBasicQueryVo, HttpServletRequest request){
+    public PageModel<InterfacBasicDto> findInterfacBasics(InterfacBasicQueryVo interfacBasicQueryVo, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("find ip {} InterfacBasicQueryVo {}", ip, JSON.toJSONString(interfacBasicQueryVo));
-
-        PageModel<InterfacBasic> page = new PageModel();
+        List<InterfacBasicDto> interfacBasicList;
+        PageModel<InterfacBasicDto> page = new PageModel();
         if(interfacBasicQueryVo.getId() != null){
-            return interfacBasicDao.getInterfacBasicById(page, interfacBasicQueryVo.getId());
+            interfacBasicList = interfacBasicDao.getInterfacBasicById(interfacBasicQueryVo.getId());
+            page.setResult(interfacBasicList);
+            return page;
+        }else {
+             interfacBasicList = interfacBasicDao.getInterfacBasics(interfacBasicQueryVo);
         }
-        return interfacBasicDao.getInterfacBasics(page, interfacBasicQueryVo);
+
+        page.setResult(interfacBasicList);
+        return page;
     }
 
     /** 接口信息插入 */
@@ -63,6 +71,31 @@ public class InterfacBasicService {
         return ResCode.C1008;
     }
 
+    /** 接口信息拷贝 */
+    public int copytInterfacBasic(Integer id, Map<String, String> messageMap, HttpServletRequest request){
+        String ip = IpUtil.getIpAddr(request);
+        LOGGER.info("insert ip {} InterfacId {}", ip, id);
+
+        if(id == null){
+            messageMap.put("errmsg", "参数缺失");
+            return ResCode.C1001;
+        }
+        List<InterfacBasicDto> interfacBasicList = interfacBasicDao.getInterfacBasicById(id);
+        if(interfacBasicList.size() == 0){
+            messageMap.put("errmsg", id+"接口不存在");
+            return ResCode.C1001;
+        }
+
+        InterfacBasic interfacBasic = interfacBasicList.get(0);
+        interfacBasic.setCreateTime(System.currentTimeMillis());
+        if(interfacBasicDao.insertInterfacBasic(interfacBasic) == 1){
+            return ResCode.C0;
+        }
+
+        messageMap.put("errmsg", "拷贝接口信息失败");
+        return ResCode.C1008;
+    }
+
     /** 接口信息更改 */
     public int updateInterfacBasic(InterfacBasic interfacBasic, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
@@ -85,7 +118,7 @@ public class InterfacBasicService {
     }
 
     /** 接口信息删除 */
-    public int deleteInterfacBasics(String[] ids, Map<String, String> messageMap, HttpServletRequest request){
+    public int deleteInterfacBasics(Integer[] ids, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("delete ip {} ids {}", ip, JSON.toJSONString(ids));
 

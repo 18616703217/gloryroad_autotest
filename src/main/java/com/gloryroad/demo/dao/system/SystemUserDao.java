@@ -3,6 +3,7 @@ package com.gloryroad.demo.dao.system;
 import com.gloryroad.demo.Vo.PageModel;
 import com.gloryroad.demo.Vo.system.SystemUserQueryVo;
 import com.gloryroad.demo.constant.GloryRoadEnum;
+import com.gloryroad.demo.dto.system.SystemUserDto;
 import com.gloryroad.demo.entity.system.SystemUser;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +21,16 @@ public class SystemUserDao {
     private JdbcTemplate jdbcTemplate;
 
     // 查询用户通过id
-    public PageModel<SystemUser> getSystemUserById(PageModel<SystemUser> page, Integer id){
+    public List<SystemUserDto> getSystemUserById(Integer id){
         String sql = String.format("SELECT * FROM system_user where id = %s and status = 0;", id);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
         System.out.println(list);
-        List<SystemUser> systemUserList = mappingObject(list);
-        page.setResult(systemUserList);
-        return page;
+        List<SystemUserDto> systemUserList = mappingObject(list);
+        return systemUserList;
     }
 
     // 查询用户通过条件
-    public List<SystemUser> checkSystemUser(String account, String passwd){
+    public List<SystemUserDto> checkSystemUser(String account, String passwd){
 
         String sql = "SELECT * FROM system_user where status = 0"
                 + " and account = '"+ account +"'"
@@ -39,12 +39,12 @@ public class SystemUserDao {
 
         System.out.println("checkSystemUser sql = " + sql);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
-        List<SystemUser> systemUserList = mappingObject(list);
+        List<SystemUserDto> systemUserList = mappingObject(list);
         return systemUserList;
     }
 
     // 查询用户通过条件
-    public PageModel<SystemUser> getSystemUsers(PageModel<SystemUser> page, SystemUserQueryVo systemUserQueryVo){
+    public List<SystemUserDto> getSystemUsers(SystemUserQueryVo systemUserQueryVo){
         int pageNo = systemUserQueryVo.getPageNo();
         int pageSize = systemUserQueryVo.getPageSize();
 
@@ -59,9 +59,8 @@ public class SystemUserDao {
         sql += String.format(" order by %s limit %s,%s;", systemUserQueryVo.getSort(),  (pageNo-1) * pageNo, pageSize);
         System.out.println("sql = " + sql);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
-        List<SystemUser> systemUserList = mappingObject(list);
-        page.setResult(systemUserList);
-        return page;
+        List<SystemUserDto> systemUserList = mappingObject(list);
+        return systemUserList;
     }
 
     // 插入用户
@@ -113,10 +112,10 @@ public class SystemUserDao {
     }
 
     // 数据库对象和数据库查询结果映射
-    private static List<SystemUser> mappingObject(List<Map<String,Object>> list){
-        List<SystemUser> systemUserList = new LinkedList<>();
+    private static List<SystemUserDto> mappingObject(List<Map<String,Object>> list){
+        List<SystemUserDto> systemUserList = new LinkedList<>();
         for(Map<String,Object> map: list){
-            SystemUser systemUser = new SystemUser();
+            SystemUserDto systemUser = new SystemUserDto();
             systemUser.setId((Integer) map.get("id"));
             systemUser.setAccount((String) map.get("account"));
             systemUser.setName((String) map.get("name"));

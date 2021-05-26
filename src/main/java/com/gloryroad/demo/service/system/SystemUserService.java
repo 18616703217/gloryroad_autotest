@@ -7,6 +7,7 @@ import com.gloryroad.demo.Vo.system.SystemUserQueryVo;
 import com.gloryroad.demo.constant.ResCode;
 import com.gloryroad.demo.dao.session.IUserDao;
 import com.gloryroad.demo.dao.system.SystemUserDao;
+import com.gloryroad.demo.dto.system.SystemUserDto;
 import com.gloryroad.demo.entity.session.IUser;
 import com.gloryroad.demo.entity.system.SystemGroup;
 import com.gloryroad.demo.entity.system.SystemUser;
@@ -38,15 +39,25 @@ public class SystemUserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemUserService.class);
 
     /** 用户信息查找 */
-    public PageModel<SystemUser> findSystemUsers(SystemUserQueryVo systemUserQueryVo, HttpServletRequest request){
+    public PageModel<SystemUserDto> findSystemUsers(SystemUserQueryVo systemUserQueryVo, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("find ip {} systemUserQueryVo {}", ip, JSON.toJSONString(systemUserQueryVo));
 
-        PageModel<SystemUser> page = new PageModel();
+        PageModel<SystemUserDto> page = new PageModel();
+        List<SystemUserDto> systemUserList;
         if(systemUserQueryVo.getId() != null){
-            return systemUserDao.getSystemUserById(page, systemUserQueryVo.getId());
+
+            systemUserList = systemUserDao.getSystemUserById(systemUserQueryVo.getId());
         }
-        return systemUserDao.getSystemUsers(page, systemUserQueryVo);
+        else {
+            systemUserList = systemUserDao.getSystemUsers(systemUserQueryVo);
+        }
+
+        for(SystemUserDto systemUser: systemUserList){
+            systemUser.setGroupName(systemGroupService.findSystemGroupById(systemUser.getGroupId()).getGroupName());
+        }
+        page.setResult(systemUserList);
+        return page;
     }
 
     /** 用户信息插入 */
