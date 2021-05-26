@@ -8,6 +8,7 @@ import com.gloryroad.demo.constant.ResCode;
 import com.gloryroad.demo.dao.interfac.InterfacBasicDao;
 import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
+import com.gloryroad.demo.service.system.SystemGroupService;
 import com.gloryroad.demo.utils.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class InterfacBasicService {
     @Autowired
     private InterfacBasicDao interfacBasicDao;
 
+    @Autowired
+    private SystemGroupService systemGroupService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfacBasicService.class);
 
     /** 接口信息查找 */
@@ -38,6 +42,10 @@ public class InterfacBasicService {
             return page;
         }else {
              interfacBasicList = interfacBasicDao.getInterfacBasics(interfacBasicQueryVo);
+        }
+
+        for(InterfacBasicDto interfacBasic: interfacBasicList){
+            interfacBasic.setGroupName(systemGroupService.findSystemGroupById(interfacBasic.getGroupId()).getGroupName());
         }
 
         page.setResult(interfacBasicList);
