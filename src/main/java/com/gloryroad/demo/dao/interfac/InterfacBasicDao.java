@@ -137,7 +137,7 @@ public class InterfacBasicDao {
             interfacBasic.setInterfacJsonData((JSONObject) map.get("interfac_json_data"));
             interfacBasic.setInterfacQueryData((JSONObject) map.get("interfac_query_data"));
             interfacBasic.setInterfacHeaderData((JSONObject) map.get("interfac_header_data"));
-            interfacBasic.setCreateTime((long) map.get("create_time"));
+            interfacBasic.setCreateTime((long) map.get("createTime"));
             interfacBasic.setStatus((Integer) map.get("status"));
             interfacBasicList.add(interfacBasic);
             System.out.println("interfacBasic = " + interfacBasic);

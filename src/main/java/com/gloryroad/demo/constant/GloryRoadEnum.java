@@ -131,4 +131,35 @@ public class GloryRoadEnum {
         }
 
     }
+
+    /**
+     * 断言内容
+     */
+    public static enum AssertPosition {
+
+        HTTP_CODE("httpCode"),
+        BODY("body"),
+        HEADER("header");
+
+        private final String value;
+
+        //构造器默认也只能是private, 从而保证构造函数只能在内部使用
+        AssertPosition(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static AssertPosition getAssertPosition(String value) {
+            for (AssertPosition assertPosition : AssertPosition.values()){
+                if(StringUtil.isNotBlank(value) && value.equals(assertPosition.getValue())){
+                    return assertPosition;
+                }
+            }
+            return null;
+        }
+
+    }
 }
