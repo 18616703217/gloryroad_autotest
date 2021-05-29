@@ -27,6 +27,8 @@ public class InterfacBasicService {
 
     @Autowired
     private SystemGroupService systemGroupService;
+    @Autowired
+    private InterfacAssertService interfacAssertService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfacBasicService.class);
 
@@ -46,6 +48,7 @@ public class InterfacBasicService {
 
         for(InterfacBasicDto interfacBasic: interfacBasicList){
             interfacBasic.setGroupName(systemGroupService.findSystemGroupById(interfacBasic.getGroupId()).getGroupName());
+            interfacBasic.setInterfacAsserts(interfacAssertService.findInterfacAsserts(interfacBasic.getId(), request));
         }
 
         page.setResult(interfacBasicList);
