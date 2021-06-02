@@ -9,12 +9,18 @@ public class CasesInterfac {
     private Integer id;
     /** 用例id */
     private Integer casesId;
+    /** 执行步骤 */
+    private Integer stepNum;
     /** 接口名称 */
     private String interfacName;
     /** 接口说明 */
     private String remark;
     /** 关联业务分组id */
     private Integer groupId;
+
+    /** url */
+    private String url;
+
     /** 请求方法 */
     private GloryRoadEnum.CaseSubMethod methodType;
     /** 请求主体 */
@@ -144,5 +150,21 @@ public class CasesInterfac {
 
     public void setCasesId(Integer casesId) {
         this.casesId = casesId;
+    }
+
+    public Integer getStepNum() {
+        return stepNum;
+    }
+
+    public void setStepNum(Integer stepNum) {
+        this.stepNum = stepNum;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

@@ -162,4 +162,85 @@ public class GloryRoadEnum {
         }
 
     }
+
+    /**
+     * 任务类型（立即执行/定时执行）
+     */
+    public static enum ExecutionType {
+
+        /**
+         * 立即执行
+         */
+        IMMEDIATELY("立即执行"),
+
+        /**
+         * 定时执行
+         */
+        TIMING("定时执行");
+        private final String value;
+
+        //构造器默认也只能是private, 从而保证构造函数只能在内部使用
+        ExecutionType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+    }
+
+    /**
+     * 任务执行的状态
+     */
+    public static enum TaskStatus {
+
+        /**
+         * 准备中
+         */
+        PREPARE("准备中"),
+        TO_BE_EXEC("待执行"),
+        EXECUTING("执行中"),
+        EXE_FAILD("执行失败"),
+        EXE_SUCESS("执行成功"),
+        CANCEL("取消"),
+        DISTRIBUTE_ERROR("下发异常"),;
+
+        private final String value;
+
+        //构造器默认也只能是private, 从而保证构造函数只能在内部使用
+        TaskStatus(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+    }
+
+    /**
+     * 用例/step执行的状态
+     */
+    public static enum RunStatus {
+        /**
+         * 准备中
+         */
+        TO_BE_EXEC("待执行"),
+        EXECUTING("执行中"),
+        EXE_FAILD("执行失败"),
+        EXE_SUCESS("执行成功"),
+        BE_BLOCKED("被阻断"),;
+
+        private final String value;
+        //构造器默认也只能是private, 从而保证构造函数只能在内部使用
+        RunStatus(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+    }
 }

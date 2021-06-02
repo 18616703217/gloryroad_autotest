@@ -57,8 +57,8 @@ public class InterfacBasicDao {
     public int insertInterfacBasic(InterfacBasic interfacBasic){
 
         String sql = "insert into interfac_basic(interfac_name, remark, group_id, create_account, method_type, body_type" +
-                "interfac_form_data, interfac_json_data, interfac_query_data, interfac_header_data, createTime) " +
-                "values('%s','%s',%s,'%s','%s','%s','%s','%s','%s','%s',%s)";
+                "interfac_form_data, interfac_json_data, interfac_query_data, interfac_header_data, createTime, url) " +
+                "values('%s','%s',%s,'%s','%s','%s','%s','%s','%s','%s',%s,'%s')";
         
         sql = String.format(sql, interfacBasic.getInterfacName(), interfacBasic.getRemark(),
                 interfacBasic.getGroupId(), interfacBasic.getCreateAccount(), interfacBasic.getMethodType().getValue(),
@@ -78,6 +78,9 @@ public class InterfacBasicDao {
         String sql = "update interfac_basic set createtime=" + interfacBasic.getCreateTime();
         if (interfacBasic.getInterfacName() != null){
             sql += ",interfac_name='" + interfacBasic.getInterfacName() + "'";
+        }
+        if (interfacBasic.getUrl() != null){
+            sql += ",url='" + interfacBasic.getUrl() + "'";
         }
         if (interfacBasic.getRemark() != null){
             sql += ",remark='" + interfacBasic.getRemark() + "'";
@@ -129,6 +132,7 @@ public class InterfacBasicDao {
             interfacBasic.setId((Integer) map.get("id"));
             interfacBasic.setInterfacName((String) map.get("interfac_name"));
             interfacBasic.setRemark((String) map.get("remark"));
+            interfacBasic.setUrl((String) map.get("url"));
             interfacBasic.setGroupId((Integer) map.get("group_id"));
             interfacBasic.setCreateAccount((String) map.get("create_account"));
             interfacBasic.setMethodType(GloryRoadEnum.CaseSubMethod.getCaseSubMethod((String) map.get("method_type")));

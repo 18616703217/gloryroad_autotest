@@ -16,6 +16,10 @@ public class InterfacBasic {
     private String remark;
     /** 关联业务分组id */
     private Integer groupId;
+
+    /** url */
+    private String url;
+
     /** 请求方法 */
     private GloryRoadEnum.CaseSubMethod methodType;
     /** 请求主体 */
@@ -113,6 +117,14 @@ public class InterfacBasic {
 
     public void setCreateAccount(String createAccount) {
         this.createAccount = createAccount;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public GloryRoadEnum.CaseBodyType getBodyType() {

@@ -1,10 +1,2 @@
-01:18:30.068[DEBUG][SpringContextShutdownHook]o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@28f2a10f, started on Mon May 24 03:04:04 CST 2021
-01:18:30.072[DEBUG][SpringContextShutdownHook]o.s.c.e.PropertySourcesPropertyResolver - Found key 'spring.liveBeansView.mbeanDomain' in PropertySource 'systemProperties' with value of type String
-01:18:30.085[DEBUG][SpringContextShutdownHook]o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147483647
-01:18:30.088[DEBUG][SpringContextShutdownHook]o.s.c.s.DefaultLifecycleProcessor - Bean 'webServerGracefulShutdown' completed its stop procedure
-01:18:30.088[DEBUG][SpringContextShutdownHook]o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147483646
-01:18:30.110[DEBUG][SpringContextShutdownHook]o.s.c.s.DefaultLifecycleProcessor - Bean 'webServerStartStop' completed its stop procedure
-01:18:30.112[DEBUG][SpringContextShutdownHook]o.s.d.r.l.RedisMessageListenerContainer - Stopped RedisMessageListenerContainer
-01:18:30.114[DEBUG][SpringContextShutdownHook]o.s.j.e.a.AnnotationMBeanExporter - Unregistering JMX-exposed beans on shutdown
-01:18:30.114[DEBUG][SpringContextShutdownHook]o.s.j.e.a.AnnotationMBeanExporter - Unregistering JMX-exposed beans
-01:18:30.116[INFO ][SpringContextShutdownHook]o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor'
+01:20:26.921[INFO ][main]c.g.demo.utils.engine.OKHttpUtil - http urlhttp://www.baidu.com ,code=200
+01:20:26.924[INFO ][main]c.g.demo.utils.engine.OKHttpUtil - http length==0

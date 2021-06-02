@@ -76,9 +76,9 @@ public class InterfacBasicController extends BaseController {
 
     @RequestMapping(value = "/copy",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseModel copy(@RequestParam("ids") Integer id, HttpServletRequest request) {
+    public ResponseModel copy(@RequestParam("id") Integer id, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
-        int code = interfacBasicService.copytInterfacBasic(id, messageMap, request);
+        int code = interfacBasicService.copyInterfacBasic(id, messageMap, request);
         if(code == ResCode.C0) {
             return ResponseModel.returnSuccess();
         }

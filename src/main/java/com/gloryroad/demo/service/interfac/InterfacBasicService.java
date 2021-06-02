@@ -83,7 +83,7 @@ public class InterfacBasicService {
     }
 
     /** 接口信息拷贝 */
-    public int copytInterfacBasic(Integer id, Map<String, String> messageMap, HttpServletRequest request){
+    public int copyInterfacBasic(Integer id, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("insert ip {} InterfacId {}", ip, id);
 
@@ -148,7 +148,10 @@ public class InterfacBasicService {
 
     /** 校验请求信息内容是否合法 */
     private static boolean checkRequestInformation(InterfacBasic interfacBasic){
-        return !interfacBasic.getMethodType().equals(GloryRoadEnum.CaseSubMethod.POST)
-                || interfacBasic.getBodyType() != null;
+        if(!interfacBasic.getMethodType().equals(GloryRoadEnum.CaseSubMethod.POST)
+                && interfacBasic.getBodyType() != null){
+            return false;
+        }
+        return true;
     }
 }

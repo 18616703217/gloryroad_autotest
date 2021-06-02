@@ -15,13 +15,13 @@ public class InterfacAssert {
     /** 断言内容 */
     private String assertContent;
 
-    /** 状态 */
+    /** 创建账号 */
     private String createAccount;
 
     /** 状态 */
     private Integer status;
 
-    /** 状态 */
+    /** 创建时间 */
     private long createTime;
 
     public Integer getId() {
