@@ -322,23 +322,4 @@ public class OKHttpUtil {
         Call call = getOkHttpClient().newCall(request);
         call.enqueue(callback);
     }
-
-    public static void main(String[] args) {
-        OKHttpUtil okHttpUtil = OKHttpUtil.getInstance();
-        File f=new File("./test.txt");
-        int code = okHttpUtil.doGetcode("http://www.baidu.com", f);
-        System.out.println("t = " + code);
-    }
-}
-
-class Test{
-    private Integer errcode;
-
-    public Integer getErrcode() {
-        return errcode;
-    }
-
-    public void setErrcode(Integer errcode) {
-        this.errcode = errcode;
-    }
 }

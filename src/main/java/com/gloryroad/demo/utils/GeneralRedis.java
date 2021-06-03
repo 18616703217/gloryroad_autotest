@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -570,6 +571,49 @@ public class GeneralRedis {
             return 0;
         }
 
+    }
+
+    public Boolean zadd(String key, long score, String member) {
+        try {
+            Boolean result = redisTemplate.opsForZSet().add(key, member, score);
+            return result;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Set<String> zrevrange(String key, long start, long end) {
+        Set<String> result = null;
+        try {
+            result = redisTemplate.opsForZSet().reverseRange(key, start, end);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public long zrem(String key, String member) {
+        long result = 0;
+        try {
+            result = redisTemplate.opsForZSet().remove(key, member);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public long zCard(String key) {
+        long result = 0;
+        try {
+            result = redisTemplate.opsForZSet().zCard(key);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

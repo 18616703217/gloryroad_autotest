@@ -243,4 +243,31 @@ public class GloryRoadEnum {
         }
 
     }
+
+    /**
+     * 任务执行频率
+     */
+    public static enum RunMode {
+        /**
+         * 准备中
+         */
+        PERIOD_ONCE("一次"),
+        PERIOD_SECOND("秒频率"),
+        PERIOD_MINUTE("分钟频率"),
+        PERIOD_HOUR("小时频率"),
+        PERIOD_DAY("天频率"),
+        PERIOD_WEEK("周频率"),
+        PERIOD_MONTH("月频率");
+
+        private final String value;
+        //构造器默认也只能是private, 从而保证构造函数只能在内部使用
+        RunMode(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+    }
 }
