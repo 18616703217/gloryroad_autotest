@@ -17,6 +17,7 @@ import com.gloryroad.demo.entity.interfac.InterfacBasic;
 import com.gloryroad.demo.service.interfac.InterfacAssertService;
 import com.gloryroad.demo.service.system.SystemGroupService;
 import com.gloryroad.demo.utils.IpUtil;
+import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,27 @@ public class CasesBasicService {
 
         page.setResult(casesBasicDtos);
         return page;
+    }
+
+    /** 用例信息查找 */
+    public List<CasesBasicDto> findCasesBasics(List<Integer> casesIds, HttpServletRequest request){
+        String ip = IpUtil.getIpAddr(request);
+        LOGGER.info("find ip {} casesIds {}", ip, casesIds);
+        List<CasesBasicDto> casesBasicDtos = Lists.newArrayList();
+        if(casesIds == null || casesIds.size() == 0) {
+            return casesBasicDtos;
+        }
+
+        for(Integer casesId: casesIds){
+            casesBasicDtos.addAll(casesBasicDao.getCasesBasicById(casesId));
+        }
+
+        for(CasesBasicDto casesBasicDto: casesBasicDtos){
+            casesBasicDto.setGroupName(systemGroupService.findSystemGroupById(casesBasicDto.getGroupId()).getGroupName());
+            casesBasicDto.setCasesInterfacDtos(casesInterfacService.findCasesInterfacsByCasesId(casesBasicDto.getId(), request));
+        }
+
+        return casesBasicDtos;
     }
 
     /** 用例信息插入 */

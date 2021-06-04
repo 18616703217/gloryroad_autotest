@@ -15,6 +15,9 @@ public class EngineConstant {
     /** 任务执行队列Redis Key */
     public static final String TASK_RUN_QUEUE_ZSET  = "task_run_queue";
 
+    /** 任务执行内容和任务id映射 */
+    public static final String TASK_RUN_HASH  = "task_run_hash";
+
 
 
 
