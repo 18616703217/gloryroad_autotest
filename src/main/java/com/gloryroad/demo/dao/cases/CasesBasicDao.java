@@ -31,7 +31,7 @@ public class CasesBasicDao {
     private JdbcTemplate jdbcTemplate;
 
     // 查询用例信息通过id
-    public List<CasesBasicDto> getCasesBasicById(Integer id){
+    public List<CasesBasicDto> getCasesBasicById(String id){
         String sql = String.format("SELECT * FROM cases_basic where id = %s and status = 0;", id);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
         System.out.println(list);

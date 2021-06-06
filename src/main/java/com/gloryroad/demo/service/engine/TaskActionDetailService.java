@@ -7,10 +7,8 @@ import com.gloryroad.demo.constant.ResCode;
 import com.gloryroad.demo.dao.engine.EngineActionBasicDao;
 import com.gloryroad.demo.dto.cases.CasesBasicDto;
 import com.gloryroad.demo.entity.engine.EngineActionBasic;
-import com.gloryroad.demo.entity.interfac.InterfacAssert;
 import com.gloryroad.demo.entity.session.IUser;
 import com.gloryroad.demo.service.cases.CasesBasicService;
-import com.gloryroad.demo.utils.GeneralRedis;
 import com.gloryroad.demo.utils.IpUtil;
 import com.gloryroad.demo.utils.TimesUtil;
 import com.gloryroad.demo.utils.session.UserUtil;
@@ -22,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TaskActionDetailService {
@@ -60,7 +59,7 @@ public class TaskActionDetailService {
         engineActionBasicDao.deleteTaskHash(engineActionBasic.getId());
 
         /* 任务内容详情获取 */
-        List<Integer> casesIds = engineActionBasic.getCasesIds();
+        List<String> casesIds = engineActionBasic.getCasesIds();
         casesBasicDtos = casesBasicService.findCasesBasics(casesIds, request);
 
         /* 判断是否要插入新任务执行 */
@@ -74,33 +73,37 @@ public class TaskActionDetailService {
     }
 
     /** 发起新的执行任务 */
-    public int insertTaskAction(HttpServletRequest request, EngineActionBasic engineActionBasic){
+    public int insertTaskAction(HttpServletRequest request, EngineActionBasic engineActionBasic, Map<String, String> messageMap){
         IUser user = userUtil.getUserSession(request);
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("getTaskAction ip {} user {}", ip, user.getName());
 
         if(engineActionBasicDao.getEngineActionBasicNum() > EngineConstant.TASK_RUN_COUNT_BORDER){
+            messageMap.put("errmsg", "任务已经在队列中");
             return ResCode.C1001;
         }
         engineActionBasic.setCreateAccount(user.getAccount());
         engineActionBasic.setMail(user.getMail());
         if(!engineActionBasicDao.insertEngineActionBasic(engineActionBasic)){
+            messageMap.put("errmsg", "任务开始失败");
             return ResCode.C1008;
         }
         return ResCode.C0;
     }
 
     /** 执行任务删除 */
-    public int deleteTaskAction(Integer taskId, HttpServletRequest request){
+    public int deleteTaskAction(Integer taskId, HttpServletRequest request, Map<String, String> messageMap){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("getTaskAction ip {}", ip);
         String engineActionBasicString = engineActionBasicDao.getTaskHash(taskId);
 
         if(engineActionBasicString == null){
+            messageMap.put("errmsg", "任务执行队列中不存在此任务");
             return ResCode.C1008;
         }
 
         if(engineActionBasicDao.deleteEngineActionBasic(engineActionBasicString) == 0){
+            messageMap.put("errmsg", "删除任务执行失败");
             return ResCode.C1008;
         }
 

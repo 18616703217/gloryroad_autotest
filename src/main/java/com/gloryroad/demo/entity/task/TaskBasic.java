@@ -16,7 +16,7 @@ public class TaskBasic {
     private String remark;
 
     /** 执行用例集合 */
-    private List<Integer> casesIds;
+    private List<String> casesIds;
 
     /** 创建账户 */
     private String createAccount;
@@ -30,11 +30,11 @@ public class TaskBasic {
     /** 状态 */
     private Integer status;
 
-    public List<Integer> getCasesIds() {
+    public List<String> getCasesIds() {
         return casesIds;
     }
 
-    public void setCasesIds(List<Integer> casesIds) {
+    public void setCasesIds(List<String> casesIds) {
         this.casesIds = casesIds;
     }
 

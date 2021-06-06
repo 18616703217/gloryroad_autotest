@@ -1,13 +1,13 @@
-package com.gloryroad.demo.Vo.cases;
+package com.gloryroad.demo.Vo.report;
 
 import com.gloryroad.demo.Vo.PageModel;
 
-public class CasesBasicQueryVo extends PageModel {
+public class ReportBasicQueryVo extends PageModel {
     /** 主键*/
-    private String id;
+    private Integer id;
 
     /** 接口名称 */
-    private String caseName;
+    private String reportName;
 
     /** 业务分组id */
     private Integer groupId;
@@ -15,12 +15,12 @@ public class CasesBasicQueryVo extends PageModel {
     /** 创建人账号 */
     private String createAccount;
 
-    public String getCaseName() {
-        return caseName;
+    public String getReportName() {
+        return reportName;
     }
 
-    public void setCaseName(String caseName) {
-        this.caseName = caseName;
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
     }
 
     public Integer getGroupId() {
@@ -39,11 +39,11 @@ public class CasesBasicQueryVo extends PageModel {
         this.createAccount = createAccount;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 }

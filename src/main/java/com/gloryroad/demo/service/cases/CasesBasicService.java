@@ -49,8 +49,6 @@ public class CasesBasicService {
         PageModel<CasesBasicDto> page = new PageModel();
         if(casesBasicQueryVo.getId() != null){
             casesBasicDtos = casesBasicDao.getCasesBasicById(casesBasicQueryVo.getId());
-            page.setResult(casesBasicDtos);
-            return page;
         }else {
             casesBasicDtos = casesBasicDao.getCasesBasics(casesBasicQueryVo);
         }
@@ -65,7 +63,7 @@ public class CasesBasicService {
     }
 
     /** 用例信息查找 */
-    public List<CasesBasicDto> findCasesBasics(List<Integer> casesIds, HttpServletRequest request){
+    public List<CasesBasicDto> findCasesBasics(List<String> casesIds, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("find ip {} casesIds {}", ip, casesIds);
         List<CasesBasicDto> casesBasicDtos = Lists.newArrayList();
@@ -73,7 +71,7 @@ public class CasesBasicService {
             return casesBasicDtos;
         }
 
-        for(Integer casesId: casesIds){
+        for(String casesId: casesIds){
             casesBasicDtos.addAll(casesBasicDao.getCasesBasicById(casesId));
         }
 
@@ -98,6 +96,7 @@ public class CasesBasicService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
+        casesBasic.setCreateTime(System.currentTimeMillis());
         if(casesBasicDao.insertCasesBasic(casesBasic) == 1){
             return ResCode.C0;
         };
@@ -106,7 +105,7 @@ public class CasesBasicService {
     }
 
     /** 用例信息拷贝 */
-    public int copyCasesBasic(Integer id, Map<String, String> messageMap, HttpServletRequest request){
+    public int copyCasesBasic(String id, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("insert ip {} CasesId {}", ip, id);
         int newId;

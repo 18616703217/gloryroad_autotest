@@ -1,27 +1,19 @@
-package com.gloryroad.demo.Vo.cases;
+package com.gloryroad.demo.Vo.task;
 
 import com.gloryroad.demo.Vo.PageModel;
 
-public class CasesBasicQueryVo extends PageModel {
+public class TaskBasicQueryVo extends PageModel {
     /** 主键*/
-    private String id;
+    private Integer id;
 
     /** 接口名称 */
-    private String caseName;
+    private String taskName;
 
     /** 业务分组id */
     private Integer groupId;
 
     /** 创建人账号 */
     private String createAccount;
-
-    public String getCaseName() {
-        return caseName;
-    }
-
-    public void setCaseName(String caseName) {
-        this.caseName = caseName;
-    }
 
     public Integer getGroupId() {
         return groupId;
@@ -39,11 +31,19 @@ public class CasesBasicQueryVo extends PageModel {
         this.createAccount = createAccount;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 }

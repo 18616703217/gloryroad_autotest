@@ -137,9 +137,9 @@ public class GloryRoadEnum {
      */
     public static enum AssertPosition {
 
-        HTTP_CODE("httpCode"),
-        BODY("body"),
-        HEADER("header");
+        HTTP_CODE("HTTP_CODE"),
+        BODY("BODY"),
+        HEADER("HEADER");
 
         private final String value;
 
@@ -171,12 +171,12 @@ public class GloryRoadEnum {
         /**
          * 立即执行
          */
-        IMMEDIATELY("立即执行"),
+        IMMEDIATELY("IMMEDIATELY"),
 
         /**
          * 定时执行
          */
-        TIMING("定时执行");
+        TIMING("TIMING");
         private final String value;
 
         //构造器默认也只能是private, 从而保证构造函数只能在内部使用
@@ -198,13 +198,31 @@ public class GloryRoadEnum {
         /**
          * 准备中
          */
-        PREPARE("准备中"),
-        TO_BE_EXEC("待执行"),
-        EXECUTING("执行中"),
-        EXE_FAILD("执行失败"),
-        EXE_SUCESS("执行成功"),
-        CANCEL("取消"),
-        DISTRIBUTE_ERROR("下发异常"),;
+        PREPARE("PREPARE"),
+        /**
+         * 待执行
+         */
+        TO_BE_EXEC("TO_BE_EXEC"),
+        /**
+         * 执行中
+         */
+        EXECUTING("EXECUTING"),
+        /**
+         * 执行失败
+         */
+        EXE_FAILD("EXE_FAILD"),
+        /**
+         * 执行成功
+         */
+        EXE_SUCESS("EXE_SUCESS"),
+        /**
+         * 取消
+         */
+        CANCEL("CANCEL"),
+        /**
+         * 下发异常
+         */
+        DISTRIBUTE_ERROR("DISTRIBUTE_ERROR"),;
 
         private final String value;
 
@@ -217,6 +235,15 @@ public class GloryRoadEnum {
             return value;
         }
 
+        public static TaskStatus getTaskStatus(String value) {
+            for (TaskStatus taskStatus : TaskStatus.values()){
+                if(StringUtil.isNotBlank(value) && value.equals(taskStatus.getValue())){
+                    return taskStatus;
+                }
+            }
+            return null;
+        }
+
     }
 
     /**
@@ -226,11 +253,23 @@ public class GloryRoadEnum {
         /**
          * 准备中
          */
-        TO_BE_EXEC("待执行"),
-        EXECUTING("执行中"),
-        EXE_FAILD("执行失败"),
-        EXE_SUCESS("执行成功"),
-        BE_BLOCKED("被阻断"),;
+        TO_BE_EXEC("TO_BE_EXEC"),
+        /**
+         * 执行中
+         */
+        EXECUTING("EXECUTING"),
+        /**
+         * 失败
+         */
+        EXE_FAILD("EXE_FAILD"),
+        /**
+         * 成功
+         */
+        EXE_SUCESS("EXE_SUCESS"),
+        /**
+         * 被阻断
+         */
+        BE_BLOCKED("BE_BLOCKED"),;
 
         private final String value;
         //构造器默认也只能是private, 从而保证构造函数只能在内部使用
@@ -242,6 +281,15 @@ public class GloryRoadEnum {
             return value;
         }
 
+        public static RunStatus getRunStatus(String value) {
+            for (RunStatus runStatus : RunStatus.values()){
+                if(StringUtil.isNotBlank(value) && value.equals(runStatus.getValue())){
+                    return runStatus;
+                }
+            }
+            return null;
+        }
+
     }
 
     /**
@@ -251,13 +299,13 @@ public class GloryRoadEnum {
         /**
          * 准备中
          */
-        PERIOD_ONCE("一次"),
-        PERIOD_SECOND("秒频率"),
-        PERIOD_MINUTE("分钟频率"),
-        PERIOD_HOUR("小时频率"),
-        PERIOD_DAY("天频率"),
-        PERIOD_WEEK("周频率"),
-        PERIOD_MONTH("月频率");
+        PERIOD_ONCE("PERIOD_ONCE"),
+        PERIOD_SECOND("PERIOD_SECOND"),
+        PERIOD_MINUTE("PERIOD_MINUTE"),
+        PERIOD_HOUR("PERIOD_HOUR"),
+        PERIOD_DAY("PERIOD_DAY"),
+        PERIOD_WEEK("PERIOD_WEEK"),
+        PERIOD_MONTH("PERIOD_MONTH");
 
         private final String value;
         //构造器默认也只能是private, 从而保证构造函数只能在内部使用

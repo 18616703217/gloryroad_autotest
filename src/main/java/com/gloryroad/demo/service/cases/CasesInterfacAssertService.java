@@ -80,7 +80,7 @@ public class CasesInterfacAssertService {
                 return ResCode.C0;
             }
         }catch (SQLException e){
-            LOGGER.error("insertCasesInterfacAsserts 失败 {}", e.toString());
+            LOGGER.error("updateCasesInterfacAsserts 失败 {}", e.toString());
         }
 
         messageMap.put("errmsg", "更改接口断言信息失败");
