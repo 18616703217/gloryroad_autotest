@@ -152,6 +152,40 @@ public class OKHttpUtil {
     }
 
     //同步
+    public String doGet(String url, JSONObject query) {
+        String data = null;
+        //创建OkHttpClient请求对象
+        OkHttpClient okHttpClient = getOkHttpClient();
+
+        for(String key: query.keySet()){
+            if(!url.contains("?")){
+                url = url + "?" + key + "=" + query.getString(key);
+            }
+
+            url = url + "&" + key + "=" + query.getString(key);
+        }
+
+        //创建Request
+        Request request = new Request.Builder()//.header("source", "android")
+                .url(url).build();
+        //得到Call对象
+        Call call = okHttpClient.newCall(request);
+        //执行异步请求
+        try {
+            Response response = call.execute();
+            if (response.code() == 200) {
+                data = response.body().string();
+                if (null != data && !data.equals("")) {
+                    return data;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    //同步
     public <T> List<T> doGetList(String url, Class<T> tClass) {
         List<T> t = new ArrayList<>();
         //创建OkHttpClient请求对象
@@ -201,22 +235,20 @@ public class OKHttpUtil {
         return t;
     }
 
-    /**
-     * post请求
-     * 参数1 url
-     * 参数2 回调Callback
-     */
-
-    public int doPost(String url, Map<String, String> params) {
-        Response response = doPost(url, params, null);
-        return response.code();
-    }
-
     //json请求
-    public String doPost(String url, String params) {
+    public String doPostJson(String url, JSONObject query, JSONObject params) {
         OkHttpClient okHttpClient = getOkHttpClient();
+
+        for(String key: query.keySet()){
+            if(!url.contains("?")){
+                url = url + "?" + key + "=" + query.getString(key);
+            }
+
+            url = url + "&" + key + "=" + query.getString(key);
+        }
+
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8")
-                , params);
+                , params.toJSONString());
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
@@ -230,48 +262,52 @@ public class OKHttpUtil {
         return null;
     }
 
-    public <T> T doPostObject(String url, Map<String, String> params, Class<T> tClass) {
-        logger.info("doPostObject url={}", url);
-        T t = null;
-        Response response = doPost(url, params, null);
-        if (response != null && response.body() != null) {
-            try {
-                String data = response.body().string();
-                if (data != null) {
-                    t = JSONObject.parseObject(data, tClass);
-                    return t;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return t;
+//    public <T> T doPostObject(String url, Map<String, String> params, Class<T> tClass) {
+//        logger.info("doPostObject url={}", url);
+//        T t = null;
+//        Response response = doPost(url, params, null);
+//        if (response != null && response.body() != null) {
+//            try {
+//                String data = response.body().string();
+//                if (data != null) {
+//                    t = JSONObject.parseObject(data, tClass);
+//                    return t;
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return t;
+//
+//    }
 
-    }
-
-    public Response doPost(String url, Map<String, String> params, Callback callback) {
+    public String doPostForm(String url, JSONObject query, JSONObject params) {
 
         //创建OkHttpClient请求对象
         OkHttpClient okHttpClient = getOkHttpClient();
-        //3.x版本post请求换成FormBody 封装键值对参数
 
+        for(String key: query.keySet()){
+            if(!url.contains("?")){
+                url = url + "?" + key + "=" + query.getString(key);
+            }
+
+            url = url + "&" + key + "=" + query.getString(key);
+        }
+
+        //3.x版本post请求换成FormBody 封装键值对参数
         FormBody.Builder builder = new FormBody.Builder();
         //遍历集合
         for (String key : params.keySet()) {
-            builder.add(key, params.get(key));
+            builder.add(key, params.getString(key));
         }
         //创建Request
         Request request = new Request.Builder().url(url).post(builder.build()).build();
         Call call = okHttpClient.newCall(request);
-        if (callback != null) {
-            call.enqueue(callback);
-        } else {
-            try {
-                Response response = call.execute();
-                return response;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            Response response = call.execute();
+            return response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -315,9 +351,9 @@ public class OKHttpUtil {
      * 参数二：请求的JSON
      * 参数三：请求回调
      */
-    public void doPostJson(String url, String jsonParams, Callback callback) {
+    public void doPostJsonCall(String url, JSONObject query, JSONObject params, Callback callback) {
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
-                jsonParams);
+                params.toJSONString());
         Request request = new Request.Builder().url(url).post(requestBody).build();
         Call call = getOkHttpClient().newCall(request);
         call.enqueue(callback);

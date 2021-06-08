@@ -96,7 +96,6 @@ public class CasesBasicService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        casesBasic.setCreateTime(System.currentTimeMillis());
         if(casesBasicDao.insertCasesBasic(casesBasic) == 1){
             return ResCode.C0;
         };

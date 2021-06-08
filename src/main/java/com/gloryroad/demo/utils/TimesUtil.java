@@ -1,5 +1,6 @@
 package com.gloryroad.demo.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -71,5 +72,10 @@ public class TimesUtil {
         millisecondTime = calendar.getTime().getTime() - oldActionDate.getTime();
 
         return millisecondTime;
+    }
+
+    public static String nowDateToYMD(){
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
+        return df.format(new Date());// new Date()为获取当前系统时间
     }
 }

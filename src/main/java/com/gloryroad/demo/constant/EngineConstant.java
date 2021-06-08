@@ -18,7 +18,8 @@ public class EngineConstant {
     /** 任务执行内容和任务id映射 */
     public static final String TASK_RUN_HASH  = "task_run_hash";
 
-
+    /** 执行过程中缓存 */
+    public static final String TASK_RUN_CACHE  = "task_run_cache";
 
 
 }

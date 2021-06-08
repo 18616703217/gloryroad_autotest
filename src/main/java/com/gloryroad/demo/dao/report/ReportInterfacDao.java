@@ -52,8 +52,8 @@ public class ReportInterfacDao {
             sql = String.format(sql, reportInterfac.getReportCaseId(), reportInterfac.getCasesInterfacId(),
                     reportInterfac.getInterfacName(), reportInterfac.getStepNum(), reportInterfac.getUrl(),
                     reportInterfac.getRemark(), reportInterfac.getMethodType().getValue(), reportInterfac.getQueryDatas(),
-                    reportInterfac.getForms(),reportInterfac.getHeaders(),reportInterfac.getJson(),
-                    reportInterfac.getCasesInterfacAsserts(), reportInterfac.getRunState().getValue());
+                    reportInterfac.getForms(),reportInterfac.getHeaders(),reportInterfac.getJsons(),
+                    reportInterfac.getAsserts(), reportInterfac.getRunState().getValue());
 
             System.out.println(sql);
             actionNum += jdbcTemplate.update(sql);
@@ -114,9 +114,9 @@ public class ReportInterfacDao {
             reportInterfac.setForms((JSONObject) map.get("forms"));
             reportInterfac.setRunState(GloryRoadEnum.RunStatus.getRunStatus((String) map.get("run_status")));
             reportInterfac.setQueryDatas((JSONObject) map.get("query_datas"));
-            reportInterfac.setJson((JSONObject) map.get("json"));
+            reportInterfac.setJsons((JSONObject) map.get("json"));
             reportInterfac.setHeaders((JSONObject) map.get("headers"));
-            reportInterfac.setCasesInterfacAsserts((String) map.get("cases_interfac_asserts"));
+            reportInterfac.setAsserts((String) map.get("cases_interfac_asserts"));
             reportInterfac.setStatus((Integer) map.get("status"));
             reportInterfac.setRemark((String) map.get("report"));
             reportInterfacs.add(reportInterfac);

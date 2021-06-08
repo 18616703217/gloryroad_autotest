@@ -64,4 +64,14 @@ public class EngineActionBasicDao {
         return generalRedis.zrem(EngineConstant.TASK_RUN_QUEUE_ZSET, engineActionBasicString);
     }
 
+    // 记录执行过程缓存
+    public void setTaskRunCache(String hkey, String value){
+        generalRedis.hset(EngineConstant.TASK_RUN_CACHE, hkey, value);
+    }
+
+    // 获取执行过程缓存
+    public String getTaskRunCache(String hkey){
+        return (String) generalRedis.hget(EngineConstant.TASK_RUN_CACHE, hkey);
+    }
+
 }

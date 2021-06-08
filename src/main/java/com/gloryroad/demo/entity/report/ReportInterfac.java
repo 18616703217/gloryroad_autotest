@@ -53,6 +53,11 @@ public class ReportInterfac {
     private JSONObject jsons;
 
     /**
+     * json（提交时的真实参数）
+     */
+    private String response;
+
+    /**
      * 断言内容
      */
     private String asserts;
@@ -143,22 +148,6 @@ public class ReportInterfac {
         this.headers = headers;
     }
 
-    public JSONObject getJson() {
-        return jsons;
-    }
-
-    public void setJson(JSONObject jsons) {
-        this.jsons = jsons;
-    }
-
-    public String getCasesInterfacAsserts() {
-        return asserts;
-    }
-
-    public void setCasesInterfacAsserts(String asserts) {
-        this.asserts = asserts;
-    }
-
     public GloryRoadEnum.RunStatus getRunState() {
         return runState;
     }
@@ -181,6 +170,30 @@ public class ReportInterfac {
 
     public void setQueryDatas(JSONObject queryDatas) {
         this.queryDatas = queryDatas;
+    }
+
+    public JSONObject getJsons() {
+        return jsons;
+    }
+
+    public void setJsons(JSONObject jsons) {
+        this.jsons = jsons;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
+
+    public String getAsserts() {
+        return asserts;
+    }
+
+    public void setAsserts(String asserts) {
+        this.asserts = asserts;
     }
 }
 

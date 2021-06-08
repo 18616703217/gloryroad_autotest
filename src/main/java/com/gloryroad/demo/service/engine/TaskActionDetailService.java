@@ -37,19 +37,18 @@ public class TaskActionDetailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskActionDetailService.class);
 
     /** 执行任务内容获取 */
-    public List<CasesBasicDto> getTaskAction(HttpServletRequest request){
+    public EngineActionBasic getTaskAction(HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("getTaskAction ip {}", ip);
 
-        List<CasesBasicDto> casesBasicDtos = Lists.newArrayList();
         EngineActionBasic engineActionBasic = engineActionBasicDao.getEngineActionBasic();
         if(engineActionBasic == null){
-            return casesBasicDtos;
+            return null;
         }
 
         /* 判断是否有需要执行的任务 */
         if(engineActionBasic.getStartTime() > System.currentTimeMillis()){
-            return casesBasicDtos;
+            return null;
         }
 
         /* 把需要执行的任务从队列里面删除 */
@@ -58,10 +57,6 @@ public class TaskActionDetailService {
         }
         engineActionBasicDao.deleteTaskHash(engineActionBasic.getId());
 
-        /* 任务内容详情获取 */
-        List<String> casesIds = engineActionBasic.getCasesIds();
-        casesBasicDtos = casesBasicService.findCasesBasics(casesIds, request);
-
         /* 判断是否要插入新任务执行 */
         long newActionTime = obtainTaskNewActionTime(engineActionBasic);
         if (newActionTime > 0){
@@ -69,6 +64,20 @@ public class TaskActionDetailService {
             engineActionBasicDao.insertEngineActionBasic(engineActionBasic);
             engineActionBasicDao.insertTaskHash(engineActionBasic.getId(), engineActionBasic);
         }
+        return engineActionBasic;
+    }
+
+    /** 执行任务内容获取 */
+    public List<CasesBasicDto> getTaskActionContent(EngineActionBasic engineActionBasic, HttpServletRequest request){
+        String ip = IpUtil.getIpAddr(request);
+        LOGGER.info("getTaskActionContent ip {}", ip);
+
+        List<CasesBasicDto> casesBasicDtos = null;
+
+        /* 任务内容详情获取 */
+        List<String> casesIds = engineActionBasic.getCasesIds();
+        casesBasicDtos = casesBasicService.findCasesBasics(casesIds, request);
+
         return casesBasicDtos;
     }
 
@@ -143,5 +152,17 @@ public class TaskActionDetailService {
         }
 
         return newActionTime;
+    }
+
+    /** 缓存任务step执行 */
+    public void setTaskRunCache(Integer taskId, Integer caseId, Integer stepNum, String response){
+        String hkey = String.format("%s_%s_%s", taskId, caseId, stepNum);
+        engineActionBasicDao.setTaskRunCache(hkey, response);
+    }
+
+    /** 获取缓存任务step执行结果 */
+    public String getTaskRunCache(Integer taskId, Integer caseId, Integer stepNum){
+        String hkey = String.format("%s_%s_%s", taskId, caseId, stepNum);
+        return engineActionBasicDao.getTaskRunCache(hkey);
     }
 }
