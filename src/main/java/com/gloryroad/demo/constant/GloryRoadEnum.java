@@ -12,19 +12,19 @@ public class GloryRoadEnum {
     }
     /** 角色*/
     public enum Role {
-        TEST("测试"){
+        TEST("TEST"){
             @Override
             public String getRoleName(){
                 return "测试";
             }
         },
-        PRODUCT("产品"){
+        PRODUCT("PRODUCT"){
             @Override
             public String getRoleName(){
                 return "产品";
             }
         },
-        DEVELOPMENT("开发"){
+        DEVELOPMENT("DEVELOPMENT"){
             @Override
             public String getRoleName() {
                 return "开发";
@@ -105,8 +105,8 @@ public class GloryRoadEnum {
     /**
      * http请求主体类型（json, form）
      */
-    public static enum CaseBodyType {
-
+    public enum CaseBodyType {
+        NONE("NONE"),
         JSON("JSON"),
         FORM("FORM");
 

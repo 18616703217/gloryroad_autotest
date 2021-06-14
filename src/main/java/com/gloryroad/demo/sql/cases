@@ -2,20 +2,21 @@ CREATE TABLE `system_user` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
 `account` varchar(50) NOT NULL DEFAULT "" COMMENT '用户账号',
 `name`  varchar(250) NOT NULL DEFAULT "" COMMENT '用户姓名',
-`role`  varchar(250) NOT NULL  DEFAULT "" COMMENT '用户角色',
-`group_id` int(11) NOT NULL DEFAULT 0 COMMENT '部门id',
+`title`  varchar(250) NOT NULL  DEFAULT "" COMMENT '用户职位',
+`department`  varchar(300) NOT NULL DEFAULT "" COMMENT '部门',
 `mail`  varchar(150) NOT NULL DEFAULT "" COMMENT '邮箱',
 `status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',
 `createTime` int(11)  NOT NULL DEFAULT 0 COMMENT '创建时间',
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `system_group` (
+CREATE TABLE `system_user` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
-`group_name` varchar(50) NOT NULL DEFAULT "" COMMENT '分组名称',
-`description`  varchar(250) NOT NULL DEFAULT "" COMMENT '描述',
-`group_sign`  varchar(250) NOT NULL  DEFAULT "" COMMENT '分组标示',
-`parent_id`  int(11) NOT NULL DEFAULT 0 COMMENT '父业务分组id',
+`account` varchar(50) NOT NULL DEFAULT "" COMMENT '用户账号',
+`name`  varchar(250) NOT NULL DEFAULT "" COMMENT '用户姓名',
+`title`  varchar(250) NOT NULL  DEFAULT "" COMMENT '用户职位',
+`department`  varchar(300) NOT NULL DEFAULT "" COMMENT '部门',
+`mail`  varchar(150) NOT NULL DEFAULT "" COMMENT '邮箱',
 `status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',
 `createTime` int(11)  NOT NULL DEFAULT 0 COMMENT '创建时间',
 PRIMARY KEY (`id`)

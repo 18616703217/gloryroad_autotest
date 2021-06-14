@@ -11,10 +11,7 @@ import com.gloryroad.demo.service.system.SystemGroupService;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -38,7 +35,7 @@ public class SystemGroupController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseModel insert(SystemGroup systemGroup, HttpServletRequest request) {
+    public ResponseModel insert(@RequestBody SystemGroup systemGroup, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
         int code = systemGroupService.insertSystemGroups(systemGroup, messageMap, request);
         if(code == ResCode.C0) {
@@ -49,7 +46,7 @@ public class SystemGroupController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseModel update(SystemGroup systemGroup, HttpServletRequest request) {
+    public ResponseModel update(@RequestBody SystemGroup systemGroup, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
         int code = systemGroupService.updateSystemGroup(systemGroup, messageMap, request);
         if(code == ResCode.C0) {

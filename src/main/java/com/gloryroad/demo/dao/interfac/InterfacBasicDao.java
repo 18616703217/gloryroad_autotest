@@ -9,11 +9,19 @@ import com.gloryroad.demo.entity.interfac.InterfacBasic;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Repository
 public class InterfacBasicDao {
@@ -49,27 +57,39 @@ public class InterfacBasicDao {
         sql += String.format(" order by %s limit %s,%s;", interfacBasicQueryVo.getSort(),  (pageNo-1) * pageNo, pageSize);
         System.out.println("sql = " + sql);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
+
         List<InterfacBasicDto> interfacBasicList = mappingObject(list);
+        System.out.println("interfacBasicList = " + interfacBasicList);
         return interfacBasicList;
     }
 
     // 插入接口信息
-    public int insertInterfacBasic(InterfacBasic interfacBasic){
+    public Integer insertInterfacBasic(InterfacBasic interfacBasic){
 
-        String sql = "insert into interfac_basic(interfac_name, remark, group_id, create_account, method_type, body_type" +
+        String sql = "insert into interfac_basic(interfac_name, remark, group_id, create_account, method_type, body_type, " +
                 "interfac_form_data, interfac_json_data, interfac_query_data, interfac_header_data, createTime, url) " +
                 "values('%s','%s',%s,'%s','%s','%s','%s','%s','%s','%s',%s,'%s')";
-        
-        sql = String.format(sql, interfacBasic.getInterfacName(), interfacBasic.getRemark(),
+        String finalSql = String.format(sql, interfacBasic.getInterfacName(), interfacBasic.getRemark(),
                 interfacBasic.getGroupId(), interfacBasic.getCreateAccount(), interfacBasic.getMethodType().getValue(),
                 interfacBasic.getBodyType().getValue(), interfacBasic.getInterfacFormData().toJSONString(),
                 interfacBasic.getInterfacJsonData().toJSONString(), interfacBasic.getInterfacQueryData().toJSONString(),
-                interfacBasic.getInterfacHeaderData().toJSONString(), interfacBasic.getCreateTime());
+                interfacBasic.getInterfacHeaderData().toJSONString(), interfacBasic.getCreateTime(), interfacBasic.getUrl());
         
-        System.out.println(sql);
-        int actionNum = jdbcTemplate.update(sql);
+        System.out.println(finalSql);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(new PreparedStatementCreator() {
 
-        return actionNum;
+            @Override
+            public PreparedStatement createPreparedStatement(Connection conn)
+                    throws SQLException {
+
+                return conn.prepareStatement(finalSql, Statement.RETURN_GENERATED_KEYS);
+
+            }
+        },keyHolder);
+        Integer i = Objects.requireNonNull(keyHolder.getKey()).intValue();//插入的数据的主键
+
+        return i;
     }
 
     // 更改接口信息
@@ -117,7 +137,7 @@ public class InterfacBasicDao {
     public int deleteInterfacBasics(Integer[] ids){
 
         String sql = "update interfac_basic set status=1 where id in (%s);";
-        String.format(sql, Joiner.on(',').join(ids));
+        sql = String.format(sql, Joiner.on(',').join(ids));
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -137,14 +157,14 @@ public class InterfacBasicDao {
             interfacBasic.setCreateAccount((String) map.get("create_account"));
             interfacBasic.setMethodType(GloryRoadEnum.CaseSubMethod.getCaseSubMethod((String) map.get("method_type")));
             interfacBasic.setBodyType(GloryRoadEnum.CaseBodyType.getCaseBodyType((String) map.get("body_type")));
-            interfacBasic.setInterfacFormData((JSONObject) map.get("interfac_form_data"));
-            interfacBasic.setInterfacJsonData((JSONObject) map.get("interfac_json_data"));
-            interfacBasic.setInterfacQueryData((JSONObject) map.get("interfac_query_data"));
-            interfacBasic.setInterfacHeaderData((JSONObject) map.get("interfac_header_data"));
-            interfacBasic.setCreateTime((long) map.get("createTime"));
+            interfacBasic.setInterfacFormData(JSONObject.parseObject((String) map.get("interfac_form_data")));
+            interfacBasic.setInterfacJsonData(JSONObject.parseObject((String) map.get("interfac_json_data")));
+            interfacBasic.setInterfacQueryData(JSONObject.parseObject((String) map.get("interfac_query_data")));
+            interfacBasic.setInterfacHeaderData(JSONObject.parseObject((String) map.get("interfac_header_data")));
+            interfacBasic.setCreateTime((Integer) map.get("createTime"));
             interfacBasic.setStatus((Integer) map.get("status"));
+
             interfacBasicList.add(interfacBasic);
-            System.out.println("interfacBasic = " + interfacBasic);
         }
         return interfacBasicList;
     }

@@ -8,9 +8,9 @@ public class PageModel<T> {
     /** 排序方向 */
     public boolean order = true;
     /** 分页页码 */
-    private int pageNo;
+    private int pageNo = 1;
     /** 每页条数 */
-    private int pageSize;
+    private int pageSize = 10;
 
     public int getPageNo() {
         return pageNo;

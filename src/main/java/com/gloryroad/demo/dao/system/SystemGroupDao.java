@@ -69,8 +69,8 @@ public class SystemGroupDao {
     // 插入分组
     public int insertSystemGroups(SystemGroup systemGroup){
 
-        String sql = "insert into system_Group(group_name, group_sign, description, createTime) " +
-                "values('%s','%s','%s',%s)";
+        String sql = "insert into system_group(group_name, group_sign, description, createTime) " +
+                "values('%s','%s','%s',%s);";
         sql = String.format(sql, systemGroup.getGroupName(), systemGroup.getGroupSign(), systemGroup.getDescription(),
                             systemGroup.getCreateTime());
         System.out.println(sql);
@@ -84,7 +84,7 @@ public class SystemGroupDao {
 
         String sql = "update system_group set createtime=" + systemGroup.getCreateTime();
         if (systemGroup.getGroupName() != null){
-            sql += ",group_name=" + systemGroup.getGroupName();
+            sql += ",group_name='" + systemGroup.getGroupName() + "'";
         }
         if (systemGroup.getGroupSign() != null){
             sql += ",group_sign='" + systemGroup.getGroupSign() + "'";
@@ -102,8 +102,8 @@ public class SystemGroupDao {
     // 删除分组
     public int deleteSystemGroups(String[] ids){
 
-        String sql = "update system_group set status=1 where id in (?);";
-        String.format(sql, Joiner.on(',').join(ids));
+        String sql = "update system_group set status=1 where id in (%s);";
+        sql = String.format(sql, Joiner.on(',').join(ids));
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -120,6 +120,7 @@ public class SystemGroupDao {
             systemGroup.setGroupSign((String) map.get("group_sign"));
             systemGroup.setGroupName((String) map.get("group_name"));
             systemGroup.setDescription((String) map.get("description"));
+            systemGroup.setParentId((Integer) map.get("parent_id"));
             systemGroup.setStatus((Integer) map.get("status"));
             systemGroup.setCreateTime((Integer) map.get("createTime"));
             systemGroupList.add(systemGroup);

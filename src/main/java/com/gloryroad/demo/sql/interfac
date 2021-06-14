@@ -1,0 +1,28 @@
+CREATE TABLE `interfac_basic` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`interfac_name` varchar(50) NOT NULL DEFAULT "" COMMENT '接口名称',
+`remark`  varchar(250) NOT NULL DEFAULT "" COMMENT '备注描述',
+`group_id`  int(11) NOT NULL DEFAULT 0 COMMENT '业务分组id',
+`url`  varchar(300) NOT NULL DEFAULT "" COMMENT '部门',
+`method_type`  varchar(150) NOT NULL DEFAULT "" COMMENT '方法类型',
+`body_type`  varchar(150) NOT NULL DEFAULT "" COMMENT '主体类型',
+`interfac_form_data`  varchar(5000) NOT NULL DEFAULT "" COMMENT '请求json主体数据',
+`interfac_json_data`  varchar(5000) NOT NULL DEFAULT "" COMMENT '请求form主体数据',
+`interfac_query_data`  varchar(1000) NOT NULL DEFAULT "" COMMENT '请求query数据',
+`interfac_header_data`  varchar(1000) NOT NULL DEFAULT "" COMMENT '请求头数据',
+`create_account`  varchar(150) NOT NULL DEFAULT "" COMMENT '创建账户',
+`status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',
+`createTime` int(11)  NOT NULL DEFAULT 0 COMMENT '创建时间',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `interfac_assert` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`interfac_id` int(11) NOT NULL DEFAULT 0 COMMENT '父接口ID',
+`assert_position`  varchar(100) NOT NULL DEFAULT "" COMMENT '断言位置',
+`assert_content`  varchar(1000) NOT NULL  DEFAULT "" COMMENT '断言内容',
+`create_account`  varchar(150) NOT NULL DEFAULT "" COMMENT '创建用户账号',
+`status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',
+`createTime` int(11)  NOT NULL DEFAULT 0 COMMENT '创建时间',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

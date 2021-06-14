@@ -35,29 +35,29 @@ public class LoginInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-
         LOGGER.info("login intercept start...");
-        response.setHeader("Cache-Control", "no-cache");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json; charset=utf-8");
-        response.setHeader("Access-Control-Allow-Credentials","true");
-        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
-        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-
-        try {
-            //统一拦截（查询当前session是否存在user）(这里user会在每次登陆成功后，写入session)
-            IUser user = userUtil.getUserSession(request);
-            if(user != null){
-                return true;
-            }
-            LOGGER.error("login intercept path" + request.getContextPath());
-            response.sendRedirect("/system/login?account=1&passwd=2");
-        } catch (Exception e) {
-            LOGGER.error("login intercept fail");
-            e.printStackTrace();
-        }
-        return false;//如果设置为false时，被请求时，拦截器执行到此处将不会继续操作
-        //如果设置为true时，请求将会继续执行后面的操作
+        return true;
+//        response.setHeader("Cache-Control", "no-cache");
+//        response.setCharacterEncoding("UTF-8");
+//        response.setContentType("application/json; charset=utf-8");
+//        response.setHeader("Access-Control-Allow-Credentials","true");
+//        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+//        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
+//
+//        try {
+//            //统一拦截（查询当前session是否存在user）(这里user会在每次登陆成功后，写入session)
+//            IUser user = userUtil.getUserSession(request);
+//            if(user != null){
+//                return true;
+//            }
+//            LOGGER.error("login intercept path" + request.getContextPath());
+//            response.sendRedirect("/system/login?account=1&passwd=2");
+//        } catch (Exception e) {
+//            LOGGER.error("login intercept fail");
+//            e.printStackTrace();
+//        }
+//        return false;//如果设置为false时，被请求时，拦截器执行到此处将不会继续操作
+//        //如果设置为true时，请求将会继续执行后面的操作
     }
 }

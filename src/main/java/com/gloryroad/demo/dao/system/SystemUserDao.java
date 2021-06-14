@@ -66,10 +66,10 @@ public class SystemUserDao {
     // 插入用户
     public int insertSystemUsers(SystemUser systemUser){
 
-        String sql = "insert into system_user(account, name, role, groupSign, groupId, mail, createTime) " +
-                "values('%s','%s','%s','%s',%s,'%s',%s)";
+        String sql = "insert into system_user(account, name, role, group_id, mail, createTime) " +
+                "values('%s','%s','%s',%s,'%s',%s)";
         sql = String.format(sql, systemUser.getAccount(), systemUser.getName(), systemUser.getRole().getRoleName(),
-                systemUser.getGroupSign(), systemUser.getGroupId(), systemUser.getMail(), systemUser.getCreateTime());
+                systemUser.getGroupId(), systemUser.getMail(), systemUser.getCreateTime());
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -83,9 +83,8 @@ public class SystemUserDao {
         if (systemUser.getMail() != null){
             sql += ",mail='" + systemUser.getMail() + "'";
         }
-        if (systemUser.getGroupSign() != null){
-            sql += ",group_sign='" + systemUser.getGroupSign() + "'";
-            sql += ",group_id=" + systemUser.getId();
+        if (systemUser.getGroupId() != null){
+            sql += ",group_id=" + systemUser.getGroupId();
         }
         if(systemUser.getRole() != null){
             sql += ",role='" + systemUser.getRole().getRoleName() + "'";
@@ -104,7 +103,7 @@ public class SystemUserDao {
     public int deleteSystemUsers(String[] ids){
 
         String sql = "update system_user set status=1 where id in (%s);";
-        String.format(sql, Joiner.on(',').join(ids));
+        sql = String.format(sql, Joiner.on(',').join(ids));
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -120,7 +119,6 @@ public class SystemUserDao {
             systemUser.setAccount((String) map.get("account"));
             systemUser.setName((String) map.get("name"));
             systemUser.setRole(GloryRoadEnum.Role.getRole((String) map.get("role")));
-            systemUser.setGroupSign((String) map.get("group_sign"));
             systemUser.setGroupId((Integer) map.get("group_id"));
             systemUser.setMail((String) map.get("mail"));
             systemUser.setStatus((Integer) map.get("status"));

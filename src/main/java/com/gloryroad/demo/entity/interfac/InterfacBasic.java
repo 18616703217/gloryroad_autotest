@@ -23,15 +23,15 @@ public class InterfacBasic {
     /** 请求方法 */
     private GloryRoadEnum.CaseSubMethod methodType;
     /** 请求主体 */
-    private GloryRoadEnum.CaseBodyType bodyType;
+    private GloryRoadEnum.CaseBodyType bodyType = GloryRoadEnum.CaseBodyType.NONE;
     /** 请求header数据 */
-    private JSONObject interfacHeaderData;
+    private JSONObject interfacHeaderData = new JSONObject();
     /** 请求form数据 */
-    private JSONObject interfacFormData;
+    private JSONObject interfacFormData = new JSONObject();
     /** 请求query数据 */
-    private JSONObject interfacQueryData;
+    private JSONObject interfacQueryData = new JSONObject();
     /** 请求json数据 */
-    private JSONObject interfacJsonData;
+    private JSONObject interfacJsonData = new JSONObject();
     /** 创建人账号 */
     private String createAccount;
     /** 状态 */

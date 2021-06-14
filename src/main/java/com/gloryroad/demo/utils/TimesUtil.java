@@ -6,6 +6,10 @@ import java.util.Date;
 
 public class TimesUtil {
 
+    public static long millisecondToSecond(long t){
+        return t/1000;
+    }
+
     public static long secondToMillisecond(Integer t){
         long millisecondTime = 0;
 

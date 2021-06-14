@@ -14,6 +14,7 @@ import com.gloryroad.demo.entity.system.SystemUser;
 import com.gloryroad.demo.utils.GeneralRedis;
 import com.gloryroad.demo.utils.IpUtil;
 import com.gloryroad.demo.utils.StringUtil;
+import com.gloryroad.demo.utils.TimesUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -78,7 +79,7 @@ public class SystemUserService {
             return ResCode.C1006;
         }
 
-        systemUser.setCreateTime(System.currentTimeMillis());
+        systemUser.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(systemUserDao.insertSystemUsers(systemUser) == 1){
             return ResCode.C0;
         }
@@ -97,7 +98,7 @@ public class SystemUserService {
             return ResCode.C1001;
         }
 
-        systemUser.setCreateTime(System.currentTimeMillis());
+        systemUser.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(systemUserDao.updateSystemUsers(systemUser) == 1){
             return ResCode.C0;
         }

@@ -9,6 +9,7 @@ import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.interfac.InterfacAssert;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
 import com.gloryroad.demo.utils.IpUtil;
+import com.gloryroad.demo.utils.TimesUtil;
 import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class InterfacAssertService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        interfacAssert.setCreateTime(System.currentTimeMillis());
+        interfacAssert.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(interfacAssertDao.insertInterfacAssert(interfacAssert) == 1){
             return ResCode.C0;
         }
@@ -70,11 +71,31 @@ public class InterfacAssertService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
+        interfacAssert.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(interfacAssertDao.updateInterfacAssert(interfacAssert) == 1){
             return ResCode.C0;
         }
         messageMap.put("errmsg", "更改接口断言信息失败");
         return ResCode.C1008;
+    }
+
+    /** 接口断言信息查找 */
+    public int copyInterfacAsserts(Integer interfacId, Integer newInterfacId, HttpServletRequest request){
+        String ip = IpUtil.getIpAddr(request);
+        LOGGER.info("find ip {} interfacId {}", ip, interfacId);
+        List<InterfacAssert> interfacAsserts = Lists.newArrayList();
+        if(interfacId == null){
+            return ResCode.C1008;
+        }
+        interfacAsserts = interfacAssertDao.getInterfacAssertsByInterfacId(interfacId);
+        for(InterfacAssert interfacAssert: interfacAsserts){
+            interfacAssert.setInterfacId(newInterfacId);
+            int num = interfacAssertDao.insertInterfacAssert(interfacAssert);
+            if(num == 0){
+                return ResCode.C1008;
+            }
+        }
+        return ResCode.C0;
     }
 
     /** 接口断言信息删除 */
@@ -88,6 +109,24 @@ public class InterfacAssertService {
         }
 
         if(interfacAssertDao.deleteInterfacAsserts(ids) > 0){
+            return ResCode.C0;
+        }
+
+        messageMap.put("errmsg", "删除接口断言信息失败");
+        return ResCode.C1008;
+    }
+
+    /** 接口断言信息删除 */
+    public int deleteByInterfacId(Integer[] interfacIds, Map<String, String> messageMap, HttpServletRequest request){
+        String ip = IpUtil.getIpAddr(request);
+        LOGGER.info("delete ip {} ids {}", ip, interfacIds);
+
+        if(interfacIds==null || interfacIds.length == 0){
+            messageMap.put("errmsg", "参数缺失");
+            return ResCode.C1001;
+        }
+
+        if(interfacAssertDao.deleteByInterfacId(interfacIds) > 0){
             return ResCode.C0;
         }
 

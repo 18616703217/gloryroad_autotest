@@ -14,10 +14,7 @@ import com.gloryroad.demo.service.system.SystemUserService;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -42,7 +39,7 @@ public class InterfacBasicController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseModel insert(InterfacBasic interfacBasic, HttpServletRequest request) {
+    public ResponseModel insert(@RequestBody InterfacBasic interfacBasic, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
         int code = interfacBasicService.insertInterfacBasics(interfacBasic, messageMap, request);
         if(code == ResCode.C0) {
@@ -53,7 +50,7 @@ public class InterfacBasicController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseModel update(InterfacBasic interfacBasic, HttpServletRequest request) {
+    public ResponseModel update(@RequestBody InterfacBasic interfacBasic, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
         int code = interfacBasicService.updateInterfacBasic(interfacBasic, messageMap, request);
         if(code == ResCode.C0) {

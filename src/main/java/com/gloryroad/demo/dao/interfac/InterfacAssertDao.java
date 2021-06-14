@@ -23,6 +23,7 @@ public class InterfacAssertDao {
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
         System.out.println(list);
         List<InterfacAssert> interfacBasicList = mappingObject(list);
+
         return interfacBasicList;
     }
 
@@ -43,7 +44,7 @@ public class InterfacAssertDao {
     // 更改接口断言信息
     public int updateInterfacAssert(InterfacAssert interfacAssert){
 
-        String sql = "update interfac_basic set createtime=" + interfacAssert.getCreateTime();
+        String sql = "update interfac_basic set createTime=" + interfacAssert.getCreateTime();
         if (interfacAssert.getAssertPosition() != null){
             sql += ",assert_position='" + interfacAssert.getAssertPosition().getValue() + "'";
         }
@@ -60,7 +61,18 @@ public class InterfacAssertDao {
     public int deleteInterfacAsserts(Integer[] ids){
 
         String sql = "update interfac_assert set status=1 where id in (%s);";
-        String.format(sql, Joiner.on(',').join(ids));
+        sql = String.format(sql, Joiner.on(',').join(ids));
+        System.out.println(sql);
+        int actionNum = jdbcTemplate.update(sql);
+
+        return actionNum;
+    }
+
+    // 通过接口ID删除
+    public int deleteByInterfacId(Integer[] interfacIds){
+
+        String sql = "update interfac_assert set status=1 where interfac_id in (%s);";
+        sql = String.format(sql, Joiner.on(',').join(interfacIds));
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -77,7 +89,7 @@ public class InterfacAssertDao {
             interfacAssert.setAssertPosition(GloryRoadEnum.AssertPosition.getAssertPosition((String) map.get("assert_position")));
             interfacAssert.setAssertContent((String) map.get("assert_content"));
             interfacAssert.setStatus((Integer) map.get("status"));
-            interfacAssert.setCreateTime((long) map.get("createTime"));
+            interfacAssert.setCreateTime((Integer) map.get("createTime"));
             interfacAssert.setCreateAccount((String) map.get("create_account"));
             interfacBasicList.add(interfacAssert);
             System.out.println("interfacAssert = " + interfacAssert);

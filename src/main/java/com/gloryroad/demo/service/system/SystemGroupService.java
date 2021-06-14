@@ -9,6 +9,7 @@ import com.gloryroad.demo.dao.system.SystemGroupDao;
 import com.gloryroad.demo.entity.system.SystemGroup;
 import com.gloryroad.demo.entity.system.SystemGroup;
 import com.gloryroad.demo.utils.IpUtil;
+import com.gloryroad.demo.utils.TimesUtil;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class SystemGroupService {
             return ResCode.C1001;
         }
 
-        systemGroup.setCreateTime(System.currentTimeMillis());
+        systemGroup.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(systemGroupDao.insertSystemGroups(systemGroup) == 1){
             return ResCode.C0;
         }
@@ -67,7 +68,7 @@ public class SystemGroupService {
             return ResCode.C1001;
         }
 
-        systemGroup.setCreateTime(System.currentTimeMillis());
+        systemGroup.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(systemGroupDao.updateSystemGroups(systemGroup) == 1){
             return ResCode.C0;
         }
