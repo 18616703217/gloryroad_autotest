@@ -44,7 +44,7 @@ public class InterfacAssertDao {
     // 更改接口断言信息
     public int updateInterfacAssert(InterfacAssert interfacAssert){
 
-        String sql = "update interfac_basic set createTime=" + interfacAssert.getCreateTime();
+        String sql = "update interfac_assert set createTime=" + interfacAssert.getCreateTime();
         if (interfacAssert.getAssertPosition() != null){
             sql += ",assert_position='" + interfacAssert.getAssertPosition().getValue() + "'";
         }
@@ -58,10 +58,10 @@ public class InterfacAssertDao {
     }
 
     // 删除接口断言信息
-    public int deleteInterfacAsserts(Integer[] ids){
+    public int deleteInterfacAsser(Integer id){
 
-        String sql = "update interfac_assert set status=1 where id in (%s);";
-        sql = String.format(sql, Joiner.on(',').join(ids));
+        String sql = "update interfac_assert set status=1 where id = %s;";
+        sql = String.format(sql, id);
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 

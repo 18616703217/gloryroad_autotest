@@ -5,6 +5,7 @@ import com.gloryroad.demo.Vo.system.SystemUserQueryVo;
 import com.gloryroad.demo.constant.GloryRoadEnum;
 import com.gloryroad.demo.dto.system.SystemUserDto;
 import com.gloryroad.demo.entity.system.SystemUser;
+import com.gloryroad.demo.utils.TimesUtil;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,8 +34,8 @@ public class SystemUserDao {
     public List<SystemUserDto> checkSystemUser(String account, String passwd){
 
         String sql = "SELECT * FROM system_user where status = 0"
-                + " and account = '"+ account +"'"
-                + " and passwd = '" + passwd +"';";
+                + " and account = '"+ account +"';";
+//                + " and passwd = '" + passwd +"';";
 
 
         System.out.println("checkSystemUser sql = " + sql);
@@ -123,6 +124,7 @@ public class SystemUserDao {
             systemUser.setMail((String) map.get("mail"));
             systemUser.setStatus((Integer) map.get("status"));
             systemUser.setCreateTime((Integer) map.get("createTime"));
+            systemUser.setCreateDate(TimesUtil.timeStamp2Date((Integer) map.get("createTime"), null));
             systemUserList.add(systemUser);
             System.out.println("systemUser = " + systemUser);
         }

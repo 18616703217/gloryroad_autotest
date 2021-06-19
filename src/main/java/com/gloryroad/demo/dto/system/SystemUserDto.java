@@ -8,11 +8,21 @@ import com.gloryroad.demo.entity.system.SystemUser;
 public class SystemUserDto extends SystemUser {
     private String groupName;
 
+    private String createDate;
+
     public String getGroupName() {
         return groupName;
     }
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 }

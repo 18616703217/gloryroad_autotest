@@ -9,6 +9,7 @@ import com.gloryroad.demo.dao.system.SystemGroupDao;
 import com.gloryroad.demo.entity.system.SystemGroup;
 import com.gloryroad.demo.entity.system.SystemGroup;
 import com.gloryroad.demo.utils.IpUtil;
+import com.gloryroad.demo.utils.StringUtil;
 import com.gloryroad.demo.utils.TimesUtil;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -44,7 +45,9 @@ public class SystemGroupService {
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("insert ip {} systemGroup {}", ip, JSON.toJSONString(systemGroup));
 
-        if(systemGroup == null || systemGroup.getId() != null){
+        if(systemGroup == null || systemGroup.getId() != null
+        || StringUtil.isBlank(systemGroup.getGroupName())
+        || StringUtil.isBlank(systemGroup.getGroupSign())){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }

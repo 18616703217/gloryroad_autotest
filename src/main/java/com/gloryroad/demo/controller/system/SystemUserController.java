@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +60,6 @@ public class SystemUserController extends BaseController {
     @RequestMapping(value = "",method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseModel delete(@RequestParam("ids") String[] ids, HttpServletRequest request) {
-
         Map<String, String> messageMap = Maps.newHashMap();
         int code = systemUserService.deleteSystemUsers(ids, messageMap, request);
         if(code == ResCode.C0) {

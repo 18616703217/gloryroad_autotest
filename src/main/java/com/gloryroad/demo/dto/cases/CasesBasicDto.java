@@ -9,6 +9,8 @@ public class CasesBasicDto extends CasesBasic {
 
     private String createUserName;
 
+    private String createDate;
+
     private List<CasesInterfacDto> casesInterfacDtos;
 
     public String getGroupName() {
@@ -33,5 +35,13 @@ public class CasesBasicDto extends CasesBasic {
 
     public void setCasesInterfacDtos(List<CasesInterfacDto> casesInterfacDtos) {
         this.casesInterfacDtos = casesInterfacDtos;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 }

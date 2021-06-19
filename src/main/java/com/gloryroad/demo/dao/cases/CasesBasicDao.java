@@ -8,6 +8,7 @@ import com.gloryroad.demo.dto.cases.CasesBasicDto;
 import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.cases.CasesBasic;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
+import com.gloryroad.demo.utils.TimesUtil;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -128,7 +129,8 @@ public class CasesBasicDao {
             casesBasicDto.setRemark((String) map.get("remark"));
             casesBasicDto.setGroupId((Integer) map.get("group_id"));
             casesBasicDto.setCreateAccount((String) map.get("create_account"));
-            casesBasicDto.setCreateTime((long) map.get("createTime"));
+            casesBasicDto.setCreateDate(TimesUtil.timeStamp2Date((Integer) map.get("createTime"), null));
+            casesBasicDto.setCreateTime((Integer) map.get("createTime"));
             casesBasicDto.setStatus((Integer) map.get("status"));
             casesBasicDtos.add(casesBasicDto);
             System.out.println("casesBasicDto = " + casesBasicDto);

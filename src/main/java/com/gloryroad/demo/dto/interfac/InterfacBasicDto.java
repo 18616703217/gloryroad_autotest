@@ -14,6 +14,8 @@ public class InterfacBasicDto extends InterfacBasic {
 
     private String createUserName;
 
+    private String createDate;
+
     /** 断言位置 */
     private List<InterfacAssert> interfacAsserts;
 
@@ -39,5 +41,13 @@ public class InterfacBasicDto extends InterfacBasic {
 
     public void setInterfacAsserts(List<InterfacAssert> interfacAsserts) {
         this.interfacAsserts = interfacAsserts;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 }

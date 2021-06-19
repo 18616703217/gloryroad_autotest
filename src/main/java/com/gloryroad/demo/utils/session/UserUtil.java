@@ -1,5 +1,6 @@
 package com.gloryroad.demo.utils.session;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gloryroad.demo.constant.GloryRoadEnum;
 import com.gloryroad.demo.dao.session.IUserDao;
 import com.gloryroad.demo.dao.system.SystemUserDao;
@@ -31,14 +32,15 @@ public class UserUtil {
      */
     public IUser getSession(final HttpServletRequest request) {
 		SystemUser systemUser = iUserDao.getUserByToken(request);
-        BuiltInUser builtInUser = null;
+        System.out.println("getSession = " + JSONObject.toJSONString(systemUser));
+        BuiltInUser builtInUser = new BuiltInUser();
 		if (systemUser != null){
             builtInUser.setName(systemUser.getName());
             builtInUser.setMail(systemUser.getMail());
             builtInUser.setRole(systemUser.getRole());
             builtInUser.setAccount(systemUser.getAccount());
         }
-        return builtInUser;
+        return null;
     }
 
     /**
@@ -52,7 +54,7 @@ public class UserUtil {
         user = this.getSession(request);
 
         /** 上线删除 */
-//		user = getUser();
+		user = getUser();
         return user;
     }
 
@@ -61,9 +63,9 @@ public class UserUtil {
      */
     public IUser getUser(){
         IUser user = new BuiltInUser();
-        ((BuiltInUser) user).setAccount("wenqiz");
-        ((BuiltInUser) user).setMail("wenqiz@tujia.com");
-        ((BuiltInUser) user).setName("张闻棋");
+        ((BuiltInUser) user).setAccount("test1");
+        ((BuiltInUser) user).setMail("test1@.com");
+        ((BuiltInUser) user).setName("test1");
         ((BuiltInUser) user).setRole(GloryRoadEnum.Role.TEST);
         return user;
     }

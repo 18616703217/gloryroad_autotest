@@ -97,6 +97,7 @@ public class InterfacBasicService {
 
         InterfacBasic interfacBasic = interfacBasicList.get(0);
         interfacBasic.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
+        interfacBasic.setInterfacName("拷贝 " + interfacBasic.getInterfacName());
         Integer newInterfacBasicId = interfacBasicDao.insertInterfacBasic(interfacBasic);
         if(newInterfacBasicId == null || newInterfacBasicId == 0){
             messageMap.put("errmsg", "拷贝接口信息失败");

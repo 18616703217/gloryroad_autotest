@@ -82,4 +82,20 @@ public class TimesUtil {
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
         return df.format(new Date());// new Date()为获取当前系统时间
     }
+
+    /**
+     * 时间戳转换成日期格式字符串
+     * @param seconds 精确到秒的字符串
+     * @return
+     */
+    public static String timeStamp2Date(Integer seconds,String format) {
+        if(seconds == null){
+            return "";
+        }
+        if(format == null || format.isEmpty()){
+            format = "yyyy-MM-dd HH:mm:ss";
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(new Date(Long.valueOf(seconds) * 1000));
+    }
 }

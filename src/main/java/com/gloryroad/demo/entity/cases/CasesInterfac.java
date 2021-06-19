@@ -15,9 +15,8 @@ public class CasesInterfac {
     private String interfacName;
     /** 接口说明 */
     private String remark;
-    /** 关联业务分组id */
-    private Integer groupId;
-
+    /** 创建账户 */
+    private String createAccount;
     /** url */
     private String url;
 
@@ -33,8 +32,7 @@ public class CasesInterfac {
     private JSONObject interfacQueryData;
     /** 请求json数据 */
     private JSONObject interfacJsonData;
-    /** 创建人账号 */
-    private String createAccount;
+
     /** 状态 */
     private Integer status;
     /** 创建时间 */
@@ -62,14 +60,6 @@ public class CasesInterfac {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public Integer getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
     }
 
     public GloryRoadEnum.CaseSubMethod getMethodType() {

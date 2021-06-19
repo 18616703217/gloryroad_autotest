@@ -6,6 +6,7 @@ import com.gloryroad.demo.Vo.interfac.InterfacBasicQueryVo;
 import com.gloryroad.demo.constant.GloryRoadEnum;
 import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
+import com.gloryroad.demo.utils.TimesUtil;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -161,6 +162,7 @@ public class InterfacBasicDao {
             interfacBasic.setInterfacJsonData(JSONObject.parseObject((String) map.get("interfac_json_data")));
             interfacBasic.setInterfacQueryData(JSONObject.parseObject((String) map.get("interfac_query_data")));
             interfacBasic.setInterfacHeaderData(JSONObject.parseObject((String) map.get("interfac_header_data")));
+            interfacBasic.setCreateDate(TimesUtil.timeStamp2Date((Integer) map.get("createTime"), null));
             interfacBasic.setCreateTime((Integer) map.get("createTime"));
             interfacBasic.setStatus((Integer) map.get("status"));
 

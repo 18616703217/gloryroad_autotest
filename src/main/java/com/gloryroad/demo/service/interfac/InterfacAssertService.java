@@ -8,8 +8,10 @@ import com.gloryroad.demo.dao.interfac.InterfacAssertDao;
 import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.interfac.InterfacAssert;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
+import com.gloryroad.demo.entity.session.IUser;
 import com.gloryroad.demo.utils.IpUtil;
 import com.gloryroad.demo.utils.TimesUtil;
+import com.gloryroad.demo.utils.session.UserUtil;
 import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,9 @@ public class InterfacAssertService {
     
     @Autowired
     private InterfacAssertDao interfacAssertDao;
+
+    @Autowired
+    private UserUtil userUtil;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfacAssertService.class);
 
@@ -44,15 +49,15 @@ public class InterfacAssertService {
     public int insertInterfacAssert(InterfacAssert interfacAssert, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("insert ip {} interfacAssert {}", ip, JSON.toJSONString(interfacAssert));
-
+        IUser user = userUtil.getUserSession(request);
         if(interfacAssert == null
                 || interfacAssert.getInterfacId() == null
                 || interfacAssert.getAssertPosition() == null
-                || interfacAssert.getAssertContent() == null
-                || interfacAssert.getCreateAccount() == null){
+                || interfacAssert.getAssertContent() == null){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
+        interfacAssert.setCreateAccount(user.getAccount());
         interfacAssert.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(interfacAssertDao.insertInterfacAssert(interfacAssert) == 1){
             return ResCode.C0;
@@ -99,16 +104,16 @@ public class InterfacAssertService {
     }
 
     /** 接口断言信息删除 */
-    public int deleteInterfacAsserts(Integer[] ids, Map<String, String> messageMap, HttpServletRequest request){
+    public int deleteInterfacAsserts(Integer id, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("delete ip {} ids {}", ip, JSON.toJSONString(ids));
+        LOGGER.info("delete ip {} ids {}", ip, id);
 
-        if(ids==null || ids.length==0){
+        if(id==null || id==0){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
 
-        if(interfacAssertDao.deleteInterfacAsserts(ids) > 0){
+        if(interfacAssertDao.deleteInterfacAsser(id) == 1){
             return ResCode.C0;
         }
 

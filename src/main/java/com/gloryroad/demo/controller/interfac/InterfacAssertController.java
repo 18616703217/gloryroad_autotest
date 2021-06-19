@@ -61,10 +61,10 @@ public class InterfacAssertController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseModel delete(@RequestParam("ids") Integer[] ids, HttpServletRequest request) {
+    public ResponseModel delete(@RequestParam("id") Integer id, HttpServletRequest request) {
 
         Map<String, String> messageMap = Maps.newHashMap();
-        int code = interfacAssertService.deleteInterfacAsserts(ids, messageMap, request);
+        int code = interfacAssertService.deleteInterfacAsserts(id, messageMap, request);
         if(code == ResCode.C0) {
             return ResponseModel.returnSuccess();
         }

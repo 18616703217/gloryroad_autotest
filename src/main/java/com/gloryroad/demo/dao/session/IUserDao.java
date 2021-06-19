@@ -64,13 +64,15 @@ public class IUserDao {
      */
     public void deleteRedis(HttpServletRequest request){
         String token = HttpUtil.getToken(request);
-        if(!StringUtil.isNotBlank(token)){
+        System.out.println("deleteRedis token = " + token);
+        if(StringUtil.isNotBlank(token)){
             String key = String.format("%s%s", RedisKey.SESSION_TOKEN,token);
             String userKey = String.format("%s%s", RedisKey.SESSION_USER,token);
-            if(StringUtil.isBlank(key)){
+            System.out.println("deleteRedis key = " + key);
+            if(StringUtil.isNotBlank(key)){
                 generalRedis.del(key);
             }
-            if(StringUtil.isBlank(userKey)){
+            if(StringUtil.isNotBlank(userKey)){
                 generalRedis.del(userKey);
             }
 

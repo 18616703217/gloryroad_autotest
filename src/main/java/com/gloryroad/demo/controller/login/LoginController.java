@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -31,7 +32,11 @@ public class LoginController {
         Map<String, String> messageMap = Maps.newHashMap();
         int code = loginService.checkSystemUser(account, passwd, messageMap, request);
         if(code == 0){
-            return ResponseModel.returnSuccess();
+            Map<String,String> userMap=new HashMap<>();
+            userMap.put("uName",account);
+            userMap.put("token","fsaadsasasasasas778888");
+            return ResponseModel.returnSuccess(userMap);
+//            return ResponseModel.returnSuccess();
         }
         return ResponseModel.returnFail(code, messageMap.get("errmsg"));
     }
