@@ -40,8 +40,8 @@ public class ReportCaseDao {
     // 插入报告用例信息
     public int insertReportCase(ReportCaseDto reportCaseDto) {
 
-        String sql = "insert into report_cases(case_id, report_base_id, case_name, case_remark, run_status, createTime) " +
-                "values(%s, %s, '%s', %s,'%s','%s','%s')";
+        String sql = "insert into report_cases(case_id, report_base_id, case_name, case_remark, run_status) " +
+                "values(%s, %s, '%s','%s','%s')";
         String finalSql = String.format(sql, reportCaseDto.getCaseId(), reportCaseDto.getReportBaseId(),
                 reportCaseDto.getCaseName(), reportCaseDto.getCaseRemark(), reportCaseDto.getRunState().getValue());
 

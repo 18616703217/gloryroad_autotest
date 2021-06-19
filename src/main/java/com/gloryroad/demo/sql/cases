@@ -3,7 +3,7 @@ CREATE TABLE `cases_basic` (
 `create_account` varchar(50) NOT NULL DEFAULT "" COMMENT '创建用户账号',
 `case_name`  varchar(250) NOT NULL DEFAULT "" COMMENT '用例名称',
 `remark`  varchar(250) NOT NULL  DEFAULT "" COMMENT '用例描述',
-`group_id`  varchar(300) NOT NULL DEFAULT "" COMMENT '业务分组id',
+`group_id`  int(11) NOT NULL DEFAULT 0 COMMENT '业务分组id',
 `status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',
 `createTime` int(11)  NOT NULL DEFAULT 0 COMMENT '创建时间',
 PRIMARY KEY (`id`)
@@ -13,6 +13,7 @@ CREATE TABLE `cases_interfac` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
 `cases_id`  int(11) NOT NULL DEFAULT 0 COMMENT '用例ID',
 `step_num`  int(11) NOT NULL DEFAULT 0 COMMENT '执行步骤',
+`create_account` varchar(50) NOT NULL DEFAULT "" COMMENT '创建用户账号',
 `interfac_name` varchar(50) NOT NULL DEFAULT "" COMMENT '接口名称',
 `remark`  varchar(250) NOT NULL DEFAULT "" COMMENT '备注描述',
 `url`  varchar(300) NOT NULL DEFAULT "" COMMENT '部门',
@@ -30,6 +31,7 @@ PRIMARY KEY (`id`)
 CREATE TABLE `cases_interfac_assert` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
 `interfac_id` int(11) NOT NULL DEFAULT 0 COMMENT '父接口ID',
+`create_account` varchar(50) NOT NULL DEFAULT "" COMMENT '创建用户账号',
 `assert_position`  varchar(100) NOT NULL DEFAULT "" COMMENT '断言位置',
 `assert_content`  varchar(1000) NOT NULL  DEFAULT "" COMMENT '断言内容',
 `status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',

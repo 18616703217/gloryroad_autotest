@@ -1,23 +1,46 @@
-CREATE TABLE `system_user` (
+CREATE TABLE `report_basic` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
-`account` varchar(50) NOT NULL DEFAULT "" COMMENT '用户账号',
-`name`  varchar(250) NOT NULL DEFAULT "" COMMENT '用户姓名',
-`title`  varchar(250) NOT NULL  DEFAULT "" COMMENT '用户职位',
-`department`  varchar(300) NOT NULL DEFAULT "" COMMENT '部门',
-`mail`  varchar(150) NOT NULL DEFAULT "" COMMENT '邮箱',
+`task_id`  varchar(300) NOT NULL DEFAULT "" COMMENT '任务ID',
+`create_account` varchar(50) NOT NULL DEFAULT "" COMMENT '创建用户账号',
+`group_id`  int(11) NOT NULL DEFAULT 0 COMMENT '业务分组id',
+`report_name` varchar(250) NOT NULL DEFAULT "" COMMENT '报告名称',
+`execution_env` varchar(50) NOT NULL DEFAULT "" COMMENT '执行环境',
+`start_time` int(11)  NOT NULL DEFAULT 0 COMMENT '开始执行时间',
+`end_time` int(11)  NOT NULL DEFAULT 0 COMMENT '结束执行时间',
+`task_status` varchar(50) NOT NULL DEFAULT "" COMMENT '任务状态',
+`err_msg` varchar(300) NOT NULL DEFAULT "" COMMENT '错误信息',
 `status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',
 `createTime` int(11)  NOT NULL DEFAULT 0 COMMENT '创建时间',
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `system_user` (
+CREATE TABLE `report_case` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
-`account` varchar(50) NOT NULL DEFAULT "" COMMENT '用户账号',
-`name`  varchar(250) NOT NULL DEFAULT "" COMMENT '用户姓名',
-`title`  varchar(250) NOT NULL  DEFAULT "" COMMENT '用户职位',
-`department`  varchar(300) NOT NULL DEFAULT "" COMMENT '部门',
-`mail`  varchar(150) NOT NULL DEFAULT "" COMMENT '邮箱',
+`case_id`  int(11) NOT NULL DEFAULT 0 COMMENT '用例ID',
+`report_base_Id`  int(11) NOT NULL DEFAULT 0 COMMENT '报告ID',
+`case_name` varchar(150) NOT NULL DEFAULT "" COMMENT '用例名称',
+`case_remark`  varchar(250) NOT NULL DEFAULT "" COMMENT '备注描述',
+`run_status` varchar(50) NOT NULL DEFAULT "" COMMENT '用例状态',
 `status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',
-`createTime` int(11)  NOT NULL DEFAULT 0 COMMENT '创建时间',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `report_interfac` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`report_base_Id`  int(11) NOT NULL DEFAULT 0 COMMENT '报告ID',
+`cases_interfac_id`  int(11) NOT NULL DEFAULT 0 COMMENT '接口ID',
+`interfac_name` varchar(50) NOT NULL DEFAULT "" COMMENT '接口名称',
+`step_num`  int(11) NOT NULL DEFAULT 0 COMMENT '执行步骤',
+`remark`  varchar(250) NOT NULL DEFAULT "" COMMENT '备注描述',
+`url`  varchar(300) NOT NULL DEFAULT "" COMMENT 'HTTP URI',
+`method_type`  varchar(150) NOT NULL DEFAULT "" COMMENT '方法类型',
+`query_datas`  varchar(1000) NOT NULL DEFAULT "" COMMENT 'query内容',
+`forms`  varchar(5000) NOT NULL DEFAULT "" COMMENT 'form内容',
+`headers`  varchar(1000) NOT NULL DEFAULT "" COMMENT '请求头内容',
+`jsons`  varchar(5000) NOT NULL DEFAULT "" COMMENT 'json内容',
+`response`  varchar(1000) NOT NULL DEFAULT "" COMMENT '响应结果',
+`asserts`  varchar(1000) NOT NULL DEFAULT "" COMMENT '断言内容',
+`run_state` varchar(50) NOT NULL DEFAULT "" COMMENT '接口执行状态',
+`status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

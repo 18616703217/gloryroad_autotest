@@ -19,9 +19,6 @@ public class ReportCase {
     /** step运行状态 */
     private GloryRoadEnum.RunStatus runState;
 
-    /** 创建时间 */
-    private long createTime;
-
     /** 状态 */
     private Integer status;
 
