@@ -17,7 +17,7 @@ public class ReportCase {
     private String caseRemark;
 
     /** step运行状态 */
-    private GloryRoadEnum.RunStatus runState;
+    private GloryRoadEnum.RunStatus runState = GloryRoadEnum.RunStatus.TO_BE_EXEC;
 
     /** 状态 */
     private Integer status;

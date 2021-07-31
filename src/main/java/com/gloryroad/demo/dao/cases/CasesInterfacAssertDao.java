@@ -21,7 +21,7 @@ public class CasesInterfacAssertDao {
 
     // 查询接口断言信息通过id
     public List<CasesInterfacAssert> getCasesInterfacAssertsByCasesInterfacId(Integer casesInterfacId){
-        String sql = String.format("SELECT * FROM cases_interfac_assert where cases_interfac_id = %s and status = 0;", casesInterfacId);
+        String sql = String.format("SELECT * FROM cases_interfac_assert where interfac_id = %s and status = 0;", casesInterfacId);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
         System.out.println(list);
         List<CasesInterfacAssert> casesInterfacAsserts = mappingObject(list);
@@ -38,7 +38,7 @@ public class CasesInterfacAssertDao {
         boolean ac = conn.getAutoCommit();
         conn.setAutoCommit(false);
         for(CasesInterfacAssert casesInterfacAssert: casesInterfacAsserts) {
-            sql = String.format(sql, casesInterfacAssert.getCasesInterfacId(), casesInterfacAssert.getAssertPosition().getValue(),
+            sql = String.format(sql, casesInterfacAssert.getInterfacId(), casesInterfacAssert.getAssertPosition().getValue(),
                     casesInterfacAssert.getAssertContent(), casesInterfacAssert.getCreateAccount(), casesInterfacAssert.getCreateTime());
 
             System.out.println(sql);
@@ -85,7 +85,7 @@ public class CasesInterfacAssertDao {
     public int deleteCasesInterfacAsserts(Integer[] ids){
 
         String sql = "update cases_interfac_assert set status=1 where id in (%s);";
-        String.format(sql, Joiner.on(',').join(ids));
+        sql = String.format(sql, Joiner.on(',').join(ids));
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -94,7 +94,7 @@ public class CasesInterfacAssertDao {
 
     // 删除接口断言信息通过id
     public int deleteByCasesInterfacId(Integer casesInterfacId){
-        String sql = String.format("update cases_interfac_assert where cases_interfac_id = %s and status = 0;", casesInterfacId);
+        String sql = String.format("update cases_interfac_assert set status = 1 where interfac_id = %s;", casesInterfacId);
         int actionNum = jdbcTemplate.update(sql);
         System.out.println(sql);
         return actionNum;
@@ -106,11 +106,11 @@ public class CasesInterfacAssertDao {
         for(Map<String,Object> map: list){
             CasesInterfacAssert casesInterfacAssert = new CasesInterfacAssert();
             casesInterfacAssert.setId((Integer) map.get("id"));
-            casesInterfacAssert.setCasesInterfacId((Integer) map.get("cases_interfac_id"));
+            casesInterfacAssert.setInterfacId((Integer) map.get("interfac_id"));
             casesInterfacAssert.setAssertPosition(GloryRoadEnum.AssertPosition.getAssertPosition((String) map.get("assert_position")));
             casesInterfacAssert.setAssertContent((String) map.get("assert_content"));
             casesInterfacAssert.setStatus((Integer) map.get("status"));
-            casesInterfacAssert.setCreateTime((long) map.get("createTime"));
+            casesInterfacAssert.setCreateTime((Integer) map.get("createTime"));
             casesInterfacAssert.setCreateAccount((String) map.get("create_account"));
             casesInterfacAsserts.add(casesInterfacAssert);
             System.out.println("CasesInterfacAssert = " + casesInterfacAssert);

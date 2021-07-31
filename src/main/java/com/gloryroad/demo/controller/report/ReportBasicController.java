@@ -15,10 +15,7 @@ import com.gloryroad.demo.service.report.ReportBasicService;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -43,9 +40,9 @@ public class ReportBasicController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseModel insert(ReportBasicDto reportBasicDto, HttpServletRequest request) {
+    public ResponseModel insert(@RequestBody ReportBasicDto reportBasicDto) {
         Map<String, String> messageMap = Maps.newHashMap();
-        int code = reportBasicService.insertReportBasic(reportBasicDto, messageMap, request);
+        int code = reportBasicService.insertReportBasic(reportBasicDto, messageMap);
         if(code == ResCode.C0) {
             return ResponseModel.returnSuccess();
         }
@@ -54,7 +51,7 @@ public class ReportBasicController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseModel update(ReportBasicDto reportBasicDto, HttpServletRequest request) {
+    public ResponseModel update(@RequestBody ReportBasicDto reportBasicDto, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
         int code = reportBasicService.updateReportBasic(reportBasicDto, messageMap, request);
         if(code == ResCode.C0) {
@@ -65,10 +62,10 @@ public class ReportBasicController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseModel delete(@RequestParam("ids") Integer[] ids, HttpServletRequest request) {
+    public ResponseModel delete(@RequestParam("id") Integer id, HttpServletRequest request) {
 
         Map<String, String> messageMap = Maps.newHashMap();
-        int code = reportBasicService.deleteReportBasics(ids, messageMap, request);
+        int code = reportBasicService.deleteReportBasics(id, messageMap, request);
         if(code == ResCode.C0) {
             return ResponseModel.returnSuccess();
         }

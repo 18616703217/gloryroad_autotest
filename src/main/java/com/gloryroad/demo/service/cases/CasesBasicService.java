@@ -14,9 +14,13 @@ import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.cases.CasesBasic;
 import com.gloryroad.demo.entity.cases.CasesInterfac;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
+import com.gloryroad.demo.entity.session.IUser;
 import com.gloryroad.demo.service.interfac.InterfacAssertService;
 import com.gloryroad.demo.service.system.SystemGroupService;
 import com.gloryroad.demo.utils.IpUtil;
+import com.gloryroad.demo.utils.StringUtil;
+import com.gloryroad.demo.utils.TimesUtil;
+import com.gloryroad.demo.utils.session.UserUtil;
 import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +43,9 @@ public class CasesBasicService {
     @Autowired
     private CasesInterfacService casesInterfacService;
 
+    @Autowired
+    private UserUtil userUtil;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CasesBasicService.class);
 
     /** 用例信息查找 */
@@ -55,7 +62,7 @@ public class CasesBasicService {
 
         for(CasesBasicDto casesBasicDto: casesBasicDtos){
             casesBasicDto.setGroupName(systemGroupService.findSystemGroupById(casesBasicDto.getGroupId()).getGroupName());
-            casesBasicDto.setCasesInterfacDtos(casesInterfacService.findCasesInterfacsByCasesId(casesBasicDto.getId(), request));
+            casesBasicDto.setCasesInterfacDtos(casesInterfacService.findCasesInterfacsByCasesId(casesBasicDto.getId()));
         }
 
         page.setResult(casesBasicDtos);
@@ -63,9 +70,7 @@ public class CasesBasicService {
     }
 
     /** 用例信息查找 */
-    public List<CasesBasicDto> findCasesBasics(List<String> casesIds, HttpServletRequest request){
-        String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("find ip {} casesIds {}", ip, casesIds);
+    public List<CasesBasicDto> findCasesBasicDtos(List<String> casesIds){
         List<CasesBasicDto> casesBasicDtos = Lists.newArrayList();
         if(casesIds == null || casesIds.size() == 0) {
             return casesBasicDtos;
@@ -77,26 +82,45 @@ public class CasesBasicService {
 
         for(CasesBasicDto casesBasicDto: casesBasicDtos){
             casesBasicDto.setGroupName(systemGroupService.findSystemGroupById(casesBasicDto.getGroupId()).getGroupName());
-            casesBasicDto.setCasesInterfacDtos(casesInterfacService.findCasesInterfacsByCasesId(casesBasicDto.getId(), request));
+            casesBasicDto.setCasesInterfacDtos(casesInterfacService.findCasesInterfacsByCasesId(casesBasicDto.getId()));
         }
 
         return casesBasicDtos;
+    }
+
+    /** 用例信息查找 */
+    public List<CasesBasic> findCasesBasics(List<String> casesIds){
+        List<CasesBasic> casesBasicList = Lists.newArrayList();
+        if(casesIds == null || casesIds.size() == 0) {
+            return casesBasicList;
+        }
+
+        for(String casesId: casesIds){
+            if(StringUtil.isNotBlank(casesId)) {
+                casesBasicList.addAll(casesBasicDao.getCasesBasicById(casesId));
+            }
+        }
+
+        return casesBasicList;
     }
 
     /** 用例信息插入 */
     public int insertCasesBasic(CasesBasic casesBasic, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         LOGGER.info("insert ip {} casesBasic {}", ip, JSON.toJSONString(casesBasic));
+        IUser user = userUtil.getUserSession(request);
 
         if(casesBasic == null
                 || casesBasic.getCaseName() == null
-                || casesBasic.getGroupId() == null
-                || casesBasic.getCreateAccount() == null)
+                || casesBasic.getGroupId() == null)
         {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        if(casesBasicDao.insertCasesBasic(casesBasic) == 1){
+        casesBasic.setCreateAccount(user.getAccount());
+        casesBasic.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
+
+        if(casesBasicDao.insertCasesBasic(casesBasic) != 0){
             return ResCode.C0;
         };
         messageMap.put("errmsg", "插入用例信息失败");
@@ -119,7 +143,7 @@ public class CasesBasicService {
         }
 
         CasesBasicDto casesBasicDto = casesBasicDtos.get(0);
-        casesBasicDto.setCreateTime(System.currentTimeMillis());
+        casesBasicDto.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         try{
             newId = casesBasicDao.insertCasesBasic(casesBasicDto);
         }catch (NullPointerException e){
@@ -128,7 +152,7 @@ public class CasesBasicService {
         }
 
 
-        List<CasesInterfacDto> casesInterfacDtos = casesBasicDto.getCasesInterfacDtos();
+        List<CasesInterfacDto> casesInterfacDtos = casesInterfacService.findCasesInterfacsByCasesId(casesBasicDto.getId());
         for(CasesInterfacDto casesInterfacDto: casesInterfacDtos){
             casesInterfacDto.setCasesId(newId);
         }
@@ -148,7 +172,7 @@ public class CasesBasicService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        casesBasic.setCreateTime(System.currentTimeMillis());
+        casesBasic.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(casesBasicDao.updateCasesBasic(casesBasic) == 1){
             return ResCode.C0;
         }

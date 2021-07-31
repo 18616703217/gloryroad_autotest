@@ -14,7 +14,7 @@ CREATE TABLE `report_basic` (
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `report_case` (
+CREATE TABLE `report_cases` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
 `case_id`  int(11) NOT NULL DEFAULT 0 COMMENT '用例ID',
 `report_base_Id`  int(11) NOT NULL DEFAULT 0 COMMENT '报告ID',
@@ -27,7 +27,7 @@ PRIMARY KEY (`id`)
 
 CREATE TABLE `report_interfac` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
-`report_base_Id`  int(11) NOT NULL DEFAULT 0 COMMENT '报告ID',
+`report_case_Id`  int(11) NOT NULL DEFAULT 0 COMMENT '用例ID',
 `cases_interfac_id`  int(11) NOT NULL DEFAULT 0 COMMENT '接口ID',
 `interfac_name` varchar(50) NOT NULL DEFAULT "" COMMENT '接口名称',
 `step_num`  int(11) NOT NULL DEFAULT 0 COMMENT '执行步骤',

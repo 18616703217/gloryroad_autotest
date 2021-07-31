@@ -20,9 +20,12 @@ public class EngineActionBasicDao {
     // 通过json获取执行实体
     public EngineActionBasic getEngineActionBasic(){
         Set<String> engineActionBasicSet = generalRedis.zrevrange(EngineConstant.TASK_RUN_QUEUE_ZSET, 0, 0);
-        String engineActionBasicString = engineActionBasicSet.iterator().next();
-        JSONObject engineActionBasicJson = JSONObject.parseObject(engineActionBasicString);
-        EngineActionBasic engineActionBasic = JSONObject.toJavaObject(engineActionBasicJson,EngineActionBasic.class);
+        EngineActionBasic engineActionBasic = null;
+        if(!engineActionBasicSet.isEmpty()) {
+            String engineActionBasicString = engineActionBasicSet.iterator().next();
+            JSONObject engineActionBasicJson = JSONObject.parseObject(engineActionBasicString);
+            engineActionBasic = JSONObject.toJavaObject(engineActionBasicJson, EngineActionBasic.class);
+        }
         return engineActionBasic;
     }
 
@@ -40,7 +43,8 @@ public class EngineActionBasicDao {
 
     // 插入任务id与任务内容映射
     public String getTaskHash(Integer taskId){
-        return JSONObject.toJSONString(generalRedis.hget(EngineConstant.TASK_RUN_HASH, taskId.toString()));
+        System.out.println("test "+generalRedis.hget(EngineConstant.TASK_RUN_HASH, taskId.toString()));
+        return (String) generalRedis.hget(EngineConstant.TASK_RUN_HASH, taskId.toString());
     }
 
     // 删除任务id与任务内容映射

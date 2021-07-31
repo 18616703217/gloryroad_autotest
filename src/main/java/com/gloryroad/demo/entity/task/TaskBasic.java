@@ -1,6 +1,7 @@
 package com.gloryroad.demo.entity.task;
 
 import com.gloryroad.demo.constant.GloryRoadEnum;
+import org.assertj.core.util.Lists;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class TaskBasic {
     private String remark;
 
     /** 执行用例集合 */
-    private List<String> casesIds;
+    private List<String> casesIds = Lists.newArrayList();
 
     /** 创建账户 */
     private String createAccount;

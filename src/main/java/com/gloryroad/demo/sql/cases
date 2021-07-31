@@ -30,7 +30,7 @@ PRIMARY KEY (`id`)
 
 CREATE TABLE `cases_interfac_assert` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
-`interfac_id` int(11) NOT NULL DEFAULT 0 COMMENT '父接口ID',
+`cases_interfac_id` int(11) NOT NULL DEFAULT 0 COMMENT '父接口ID',
 `create_account` varchar(50) NOT NULL DEFAULT "" COMMENT '创建用户账号',
 `assert_position`  varchar(100) NOT NULL DEFAULT "" COMMENT '断言位置',
 `assert_content`  varchar(1000) NOT NULL  DEFAULT "" COMMENT '断言内容',

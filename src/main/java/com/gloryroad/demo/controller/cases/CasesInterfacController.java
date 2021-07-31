@@ -13,10 +13,7 @@ import com.gloryroad.demo.service.cases.CasesInterfacService;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,9 +26,21 @@ public class CasesInterfacController extends BaseController {
     @Autowired
     private CasesInterfacService casesInterfacService;
 
+    @RequestMapping(value = "",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseModel<CasesInterfacDto> find(@RequestParam("id") Integer id, HttpServletRequest request) {
+        try {
+            CasesInterfacDto casesInterfacDto = casesInterfacService.findById(id, request);
+            return ResponseModel.returnSuccess(casesInterfacDto);
+        }catch (Exception e){
+            System.out.println("e = " + e.toString());
+            return ResponseModel.returnFail(ResCode.C1008, "查询信息用例失败");
+        }
+    }
+
     @RequestMapping(value = "",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseModel insert(List<CasesInterfacDto> casesInterfacDtos, HttpServletRequest request) {
+    public ResponseModel insert(@RequestBody List<CasesInterfacDto> casesInterfacDtos, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
         int code = casesInterfacService.insertCasesInterfacs(casesInterfacDtos, messageMap, request);
         if(code == ResCode.C0) {
@@ -42,9 +51,9 @@ public class CasesInterfacController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseModel update(CasesInterfacDto casesInterfacDto, HttpServletRequest request) {
+    public ResponseModel update(@RequestBody List<CasesInterfacDto> casesInterfacDtos, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
-        int code = casesInterfacService.updateCasesInterfac(casesInterfacDto, messageMap, request);
+        int code = casesInterfacService.updateCasesInterfac(casesInterfacDtos, messageMap, request);
         if(code == ResCode.C0) {
             return ResponseModel.returnSuccess();
         }
@@ -53,10 +62,10 @@ public class CasesInterfacController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseModel delete(@RequestParam("ids") Integer[] ids, HttpServletRequest request) {
+    public ResponseModel delete(@RequestParam("id") Integer id, HttpServletRequest request) {
 
         Map<String, String> messageMap = Maps.newHashMap();
-        int code = casesInterfacService.deleteCasesInterfacs(ids, messageMap, request);
+        int code = casesInterfacService.deleteCasesInterfacs(id, messageMap, request);
         if(code == ResCode.C0) {
             return ResponseModel.returnSuccess();
         }

@@ -13,6 +13,7 @@ import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -66,12 +68,13 @@ public class CasesBasicDao {
     // 插入用例信息
     public int insertCasesBasic(CasesBasic casesBasic){
 
-        String sql = "insert into interfac_basic(case_name, remark, group_id, create_account, createTime) " +
+        String sql = "insert into cases_basic(case_name, remark, group_id, create_account, createTime) " +
                 "values('%s','%s',%s, '%s', %s)";
 
         String finalSql = String.format(sql, casesBasic.getCaseName(), casesBasic.getRemark(),
                 casesBasic.getGroupId(), casesBasic.getCreateAccount(), casesBasic.getCreateTime());
 
+        System.out.println(finalSql);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -79,12 +82,11 @@ public class CasesBasicDao {
             public PreparedStatement createPreparedStatement(Connection conn)
                     throws SQLException {
 
-                return conn.prepareStatement(finalSql);
+                return conn.prepareStatement(finalSql, Statement.RETURN_GENERATED_KEYS);
 
             }
         },keyHolder);
-        int i = Objects.requireNonNull(keyHolder.getKey()).intValue();//插入的数据的主键
-
+        Integer i = Objects.requireNonNull(keyHolder.getKey()).intValue();//插入的数据的主键
         return i;
     }
 
@@ -112,7 +114,7 @@ public class CasesBasicDao {
     public int deleteCasesBasics(Integer[] ids){
 
         String sql = "update cases_basic set status=1 where id in (%s);";
-        String.format(sql, Joiner.on(',').join(ids));
+        sql = String.format(sql, Joiner.on(',').join(ids));
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 

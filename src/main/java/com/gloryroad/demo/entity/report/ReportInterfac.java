@@ -36,21 +36,21 @@ public class ReportInterfac {
      */
     private GloryRoadEnum.CaseSubMethod methodType;
 
-    private JSONObject queryDatas;
+    private String queryDatas;
     /**
      * form（提交时的真实参数）
      */
-    private JSONObject forms;
+    private String forms;
 
     /**
      * header（提交时的真实参数）
      */
-    private JSONObject headers;
+    private String headers;
 
     /**
      * json（提交时的真实参数）
      */
-    private JSONObject jsons;
+    private String jsons;
 
     /**
      * json（提交时的真实参数）
@@ -60,7 +60,7 @@ public class ReportInterfac {
     /**
      * 断言内容
      */
-    private String asserts;
+    private String asserts = "";
 
     /** 状态 */
     private Integer status;
@@ -132,20 +132,36 @@ public class ReportInterfac {
         this.methodType = methodType;
     }
 
-    public JSONObject getForms() {
+    public String getQueryDatas() {
+        return queryDatas;
+    }
+
+    public void setQueryDatas(String queryDatas) {
+        this.queryDatas = queryDatas;
+    }
+
+    public String getForms() {
         return forms;
     }
 
-    public void setForms(JSONObject forms) {
+    public void setForms(String forms) {
         this.forms = forms;
     }
 
-    public JSONObject getHeaders() {
+    public String getHeaders() {
         return headers;
     }
 
-    public void setHeaders(JSONObject headers) {
+    public void setHeaders(String headers) {
         this.headers = headers;
+    }
+
+    public String getJsons() {
+        return jsons;
+    }
+
+    public void setJsons(String jsons) {
+        this.jsons = jsons;
     }
 
     public GloryRoadEnum.RunStatus getRunState() {
@@ -162,22 +178,6 @@ public class ReportInterfac {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public JSONObject getQueryDatas() {
-        return queryDatas;
-    }
-
-    public void setQueryDatas(JSONObject queryDatas) {
-        this.queryDatas = queryDatas;
-    }
-
-    public JSONObject getJsons() {
-        return jsons;
-    }
-
-    public void setJsons(JSONObject jsons) {
-        this.jsons = jsons;
     }
 
     public String getResponse() {

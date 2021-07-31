@@ -2,6 +2,7 @@ CREATE TABLE `task_basic` (
 `id` int(11) NOT NULL AUTO_INCREMENT,
 `task_name` varchar(50) NOT NULL DEFAULT "" COMMENT '任务名称',
 `remark`  varchar(250) NOT NULL DEFAULT "" COMMENT '任务描述',
+`cases_ids`  varchar(500) NOT NULL DEFAULT "" COMMENT '用例ids',
 `create_account`  varchar(50) NOT NULL  DEFAULT "" COMMENT '创建用户',
 `group_id`  int(11) NOT NULL DEFAULT 0 COMMENT '分组id',
 `status`  TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0：正常，1：删除',

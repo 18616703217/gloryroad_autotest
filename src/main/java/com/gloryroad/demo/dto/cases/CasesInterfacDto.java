@@ -6,13 +6,13 @@ import com.gloryroad.demo.entity.cases.CasesInterfacAssert;
 import java.util.List;
 
 public class CasesInterfacDto extends CasesInterfac {
-    private List<CasesInterfacAssert> casesInterfacAsserts;
+    private List<CasesInterfacAssert> interfacAsserts;
 
-    public List<CasesInterfacAssert> getCasesInterfacAsserts() {
-        return casesInterfacAsserts;
+    public List<CasesInterfacAssert> getInterfacAsserts() {
+        return interfacAsserts;
     }
 
-    public void setCasesInterfacAsserts(List<CasesInterfacAssert> casesInterfacAsserts) {
-        this.casesInterfacAsserts = casesInterfacAsserts;
+    public void setInterfacAsserts(List<CasesInterfacAssert> interfacAsserts) {
+        this.interfacAsserts = interfacAsserts;
     }
 }

@@ -42,21 +42,22 @@ public class ReportInterfacDao {
     public int insertReportInterfacs(List<ReportInterfac> reportInterfacs) throws SQLException {
 
         String sql = "insert into report_interfac(report_case_id, cases_interfac_id, interfac_name, step_num, url, remark, " +
-                "method_type, query_Datas, forms, headers, jsons, asserts, run_status) " +
-                "values(%s,%s,'%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s')";
+                "method_type, query_datas, forms, headers, jsons, asserts, run_state, response) " +
+                "values(%s,%s,'%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')";
+        String finalSql = "";
         int actionNum = 0;
         Connection conn = jdbcTemplate.getDataSource().getConnection();
         boolean ac = conn.getAutoCommit();
         conn.setAutoCommit(false);
         for(ReportInterfac reportInterfac: reportInterfacs) {
-            sql = String.format(sql, reportInterfac.getReportCaseId(), reportInterfac.getCasesInterfacId(),
+            finalSql = String.format(sql, reportInterfac.getReportCaseId(), reportInterfac.getCasesInterfacId(),
                     reportInterfac.getInterfacName(), reportInterfac.getStepNum(), reportInterfac.getUrl(),
                     reportInterfac.getRemark(), reportInterfac.getMethodType().getValue(), reportInterfac.getQueryDatas(),
                     reportInterfac.getForms(),reportInterfac.getHeaders(),reportInterfac.getJsons(),
-                    reportInterfac.getAsserts(), reportInterfac.getRunState().getValue());
+                    reportInterfac.getAsserts(), reportInterfac.getRunState().getValue(), reportInterfac.getResponse().replaceAll("'","\""));
 
-            System.out.println(sql);
-            actionNum += jdbcTemplate.update(sql);
+            System.out.println(finalSql);
+            actionNum += jdbcTemplate.update(finalSql);
         }
         if(actionNum != reportInterfacs.size()){
             conn.rollback();
@@ -76,7 +77,7 @@ public class ReportInterfacDao {
 
         for(ReportInterfac reportInterfac: reportInterfacs) {
             if(reportInterfac.getRunState() != null){
-                String sql = "update report_interfac set run_status=" + reportInterfac.getRunState().getValue();
+                String sql = "update report_interfac set run_state=" + reportInterfac.getRunState().getValue();
                 sql += " where id = " + reportInterfac.getId() + ";";
                 System.out.println(sql);
                 actionNum += jdbcTemplate.update(sql);
@@ -111,11 +112,11 @@ public class ReportInterfacDao {
             reportInterfac.setUrl((String) map.get("url"));
             reportInterfac.setStepNum((Integer) map.get("step_num"));
             reportInterfac.setMethodType(GloryRoadEnum.CaseSubMethod.getCaseSubMethod((String) map.get("method_type")));
-            reportInterfac.setForms((JSONObject) map.get("forms"));
+            reportInterfac.setForms(JSONObject.toJSONString(map.get("forms")));
             reportInterfac.setRunState(GloryRoadEnum.RunStatus.getRunStatus((String) map.get("run_status")));
-            reportInterfac.setQueryDatas((JSONObject) map.get("query_datas"));
-            reportInterfac.setJsons((JSONObject) map.get("json"));
-            reportInterfac.setHeaders((JSONObject) map.get("headers"));
+            reportInterfac.setQueryDatas((String) map.get("query_datas"));
+            reportInterfac.setJsons((String) map.get("json"));
+            reportInterfac.setHeaders((String) map.get("headers"));
             reportInterfac.setAsserts((String) map.get("cases_interfac_asserts"));
             reportInterfac.setStatus((Integer) map.get("status"));
             reportInterfac.setRemark((String) map.get("report"));

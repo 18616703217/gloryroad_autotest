@@ -17,6 +17,7 @@ import com.gloryroad.demo.entity.report.ReportBasic;
 import com.gloryroad.demo.service.cases.CasesInterfacService;
 import com.gloryroad.demo.service.system.SystemGroupService;
 import com.gloryroad.demo.utils.IpUtil;
+import com.gloryroad.demo.utils.TimesUtil;
 import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,9 +64,8 @@ public class ReportBasicService {
     }
 
     /** 报告信息插入 */
-    public int insertReportBasic(ReportBasicDto reportBasicDto, Map<String, String> messageMap, HttpServletRequest request){
-        String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("insert ip {} reportBasicDto {}", ip, JSON.toJSONString(reportBasicDto));
+    public int insertReportBasic(ReportBasicDto reportBasicDto, Map<String, String> messageMap){
+        LOGGER.info("insert reportBasicDto {}", JSON.toJSONString(reportBasicDto));
 
         if(reportBasicDto == null
                 || reportBasicDto.getReportName() == null
@@ -75,18 +75,27 @@ public class ReportBasicService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-
+        reportBasicDto.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         Integer reportBasicId = reportBasicDao.insertReportBasic(reportBasicDto);
         if(reportBasicId == null || reportBasicId == 0){
             messageMap.put("errmsg", "插入报告失败");
             return ResCode.C1008;
         };
-
-        for(ReportCaseDto reportCaseDto: reportBasicDto.getReportCaseDtos()){
-            reportCaseDto.setReportBaseId(reportBasicId);
+        if(reportBasicDto.getReportCaseDtos() == null || reportBasicDto.getReportCaseDtos().size() == 0){
+            return ResCode.C0;
         }
 
-        reportCaseService.insertReportCasess(reportBasicDto.getReportCaseDtos(), messageMap, request);
+        List<ReportCaseDto> reportCaseDtos = Lists.newArrayList();
+        for(ReportCaseDto reportCaseDto: reportBasicDto.getReportCaseDtos()){
+            reportCaseDto.setReportBaseId(reportBasicId);
+            reportCaseDtos.add(reportCaseDto);
+        }
+        int code = reportCaseService.insertReportCasess(reportCaseDtos, messageMap);
+
+        if(code == ResCode.C0){
+            return ResCode.C0;
+        }
+
         messageMap.put("errmsg", "插入报告失败");
         return ResCode.C1008;
     }
@@ -100,7 +109,7 @@ public class ReportBasicService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        reportBasicDto.setCreateTime(System.currentTimeMillis());
+        reportBasicDto.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(reportBasicDao.updateReportBasic(reportBasicDto) == 1){
             return ResCode.C0;
         }
@@ -109,33 +118,31 @@ public class ReportBasicService {
     }
 
     /** 报告信息删除 */
-    public int deleteReportBasics(Integer[] ids, Map<String, String> messageMap, HttpServletRequest request){
+    public int deleteReportBasics(Integer id, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("delete ip {} ids {}", ip, JSON.toJSONString(ids));
+        LOGGER.info("delete ip {} id {}", ip, id);
 
-        if(ids==null || ids.length==0){
+        if(id==null || id==0){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
 
-        for(Integer id: ids){
-            List<ReportBasicDto> reportBasicDtos = reportBasicDao.getReportBasicById(id);
-            if(reportBasicDtos.size() == 0
-                    || GloryRoadEnum.TaskStatus.EXECUTING == reportBasicDtos.get(0).getTaskStatus()
-                    || GloryRoadEnum.TaskStatus.PREPARE == reportBasicDtos.get(0).getTaskStatus()
-                    || GloryRoadEnum.TaskStatus.TO_BE_EXEC == reportBasicDtos.get(0).getTaskStatus() ){
-                messageMap.put("errmsg", "报告状态不是终态，不可删除");
-                return ResCode.C1008;
+        List<ReportBasicDto> reportBasicDtos = reportBasicDao.getReportBasicById(id);
+        if(reportBasicDtos.size() == 0
+                || GloryRoadEnum.TaskStatus.EXECUTING == reportBasicDtos.get(0).getTaskStatus()
+                || GloryRoadEnum.TaskStatus.PREPARE == reportBasicDtos.get(0).getTaskStatus()
+                || GloryRoadEnum.TaskStatus.TO_BE_EXEC == reportBasicDtos.get(0).getTaskStatus() ){
+            messageMap.put("errmsg", "报告状态不是终态，不可删除");
+            return ResCode.C1008;
 
-            }
         }
 
-        int code = reportCaseService.deleteByReportId(ids, messageMap, request);
+        int code = reportCaseService.deleteByReportId(id, messageMap, request);
         if(code != ResCode.C0){
             return code;
         }
 
-        if(reportBasicDao.deleteReportBasics(ids) == 0){
+        if(reportBasicDao.deleteReportBasics(id) == 0){
             messageMap.put("errmsg", "删除报告信息失败");
             return ResCode.C1008;
         }

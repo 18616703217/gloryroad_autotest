@@ -1,6 +1,7 @@
 package com.gloryroad.demo.service.cases;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.gloryroad.demo.Vo.PageModel;
 import com.gloryroad.demo.Vo.interfac.InterfacBasicQueryVo;
 import com.gloryroad.demo.constant.GloryRoadEnum;
@@ -16,6 +17,7 @@ import com.gloryroad.demo.entity.interfac.InterfacBasic;
 import com.gloryroad.demo.service.interfac.InterfacAssertService;
 import com.gloryroad.demo.service.system.SystemGroupService;
 import com.gloryroad.demo.utils.IpUtil;
+import com.gloryroad.demo.utils.TimesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +40,26 @@ public class CasesInterfacService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasesInterfacService.class);
 
     /** 接口信息查找 */
-    public List<CasesInterfacDto> findCasesInterfacsByCasesId(Integer casesBasicId, HttpServletRequest request){
+    public CasesInterfacDto findById(Integer id, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("find ip {} casesBasicId {}", ip, casesBasicId);
+        LOGGER.info("find ip {} casesInterfacId {}", ip, id);
+        CasesInterfacDto casesInterfacDto = new CasesInterfacDto();
+        List<CasesInterfacDto> casesInterfacDtos = casesInterfacDao.getById(id);
+        if(casesInterfacDtos.size() != 1){
+            return casesInterfacDto;
+        }
+        casesInterfacDto = casesInterfacDtos.get(0);
+        casesInterfacDto.setInterfacAsserts(casesInterfacAssertService.findCasesInterfacAsserts(casesInterfacDto.getId(), request));
+        return casesInterfacDto;
+    }
+
+    /** 接口信息查找 */
+    public List<CasesInterfacDto> findCasesInterfacsByCasesId(Integer casesBasicId){
+        LOGGER.info("find casesBasicId {}", casesBasicId);
         List<CasesInterfacDto> casesInterfacDtos = casesInterfacDao.getCasesInterfacByCaeseId(casesBasicId);
 
         for(CasesInterfacDto casesInterfacDto: casesInterfacDtos){
-            casesInterfacDto.setCasesInterfacAsserts(casesInterfacAssertService.findCasesInterfacAsserts(casesInterfacDto.getId(), request));
+            casesInterfacDto.setInterfacAsserts(casesInterfacAssertService.findCasesInterfacAsserts(casesInterfacDto.getId(), null));
         }
         return casesInterfacDtos;
     }
@@ -65,16 +80,30 @@ public class CasesInterfacService {
                 messageMap.put("errmsg", "请求信息不合法");
                 return ResCode.C1002;
             }
-            casesInterfacDto.setCreateTime(System.currentTimeMillis());
+            casesInterfacDto.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
+
         }
         try {
             for(CasesInterfacDto casesInterfacDto: casesInterfacDtos) {
+                System.out.println("casesInterfacDto = " + JSONObject.toJSONString(casesInterfacDto));
                 newId = casesInterfacDao.insertInterfacBasic(casesInterfacDto);
-                for(CasesInterfacAssert casesInterfacAssert: casesInterfacDto.getCasesInterfacAsserts()){
-                    casesInterfacAssert.setCasesInterfacId(newId);
+
+                if(newId == 0){
+                    messageMap.put("errmsg", "插入接口信息失败");
+                    return ResCode.C1008;
+                }
+                System.out.println("insert casesInterfacAsserts = " + casesInterfacDto.getInterfacAsserts());
+                if(casesInterfacDto.getInterfacAsserts() == null
+                        || casesInterfacDto.getInterfacAsserts().size() == 0){
+                    continue;
                 }
 
-                int code = casesInterfacAssertService.insertCasesInterfacAsserts(casesInterfacDto.getCasesInterfacAsserts(), messageMap, request);
+                for(CasesInterfacAssert casesInterfacAssert: casesInterfacDto.getInterfacAsserts()){
+                    System.out.println("insert casesInterfacAssert = " + casesInterfacAssert);
+                    casesInterfacAssert.setInterfacId(newId);
+                }
+
+                int code = casesInterfacAssertService.insertCasesInterfacAsserts(casesInterfacDto.getInterfacAsserts(), messageMap, request);
 
                 if(code != ResCode.C0){
                     return ResCode.C1008;
@@ -90,42 +119,43 @@ public class CasesInterfacService {
     }
 
     /** 接口信息更改 */
-    public int updateCasesInterfac(CasesInterfac casesInterfac, Map<String, String> messageMap, HttpServletRequest request){
+    public int updateCasesInterfac(List<CasesInterfacDto> casesInterfacs, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("update ip {} casesInterfac {}", ip, JSON.toJSONString(casesInterfac));
+        LOGGER.info("update ip {} casesInterfac {}", ip, JSON.toJSONString(casesInterfacs));
 
-        if(casesInterfac == null || casesInterfac.getId() == null){
+        if(casesInterfacs == null || casesInterfacs.size() == 0){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        if(checkRequestInformation(casesInterfac)){
-            messageMap.put("errmsg", "POST请求无请求主体");
-            return ResCode.C1002;
+        for (CasesInterfac casesInterfac: casesInterfacs){
+            if(!checkRequestInformation(casesInterfac)){
+                messageMap.put("errmsg", "POST请求无请求主体");
+                return ResCode.C1002;
+            }
+
+            casesInterfac.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
+            if(casesInterfacDao.updateCasesInterfacBasic(casesInterfac) != 1){
+                messageMap.put("errmsg", "更改接口信息失败");
+                return ResCode.C1008;
+            }
         }
-        casesInterfac.setCreateTime(System.currentTimeMillis());
-        if(casesInterfacDao.updateCasesInterfacBasic(casesInterfac) == 1){
-            return ResCode.C0;
-        }
-        messageMap.put("errmsg", "更改接口信息失败");
-        return ResCode.C1008;
+        return ResCode.C0;
     }
 
     /** 接口信息删除 */
-    public int deleteCasesInterfacs(Integer[] ids, Map<String, String> messageMap, HttpServletRequest request){
+    public int deleteCasesInterfacs(Integer id, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("delete ip {} ids {}", ip, JSON.toJSONString(ids));
+        LOGGER.info("delete ip {} ids {}", ip, id);
 
-        if(ids==null || ids.length==0){
+        if(id==null || id == 0){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        for(Integer id: ids){
-            int code = casesInterfacAssertService.deleteByCasesInterfacId(id, messageMap, request);
-            if(code != ResCode.C0){
-                return code;
-            }
+        int code = casesInterfacAssertService.deleteByCasesInterfacId(id, messageMap, request);
+        if(code != ResCode.C0){
+            return code;
         }
-        if(casesInterfacDao.deleteCasesInterfacs(ids) == 0){
+        if(casesInterfacDao.deleteCasesInterfacs(id) == 0){
             messageMap.put("errmsg", "删除接口信息失败");
             return ResCode.C1008;
         }
@@ -141,7 +171,7 @@ public class CasesInterfacService {
         for(Integer casesBasicId: casesBasicIds){
             List<CasesInterfacDto> casesInterfacDtos = casesInterfacDao.getCasesInterfacByCaeseId(casesBasicId);
             if(casesInterfacDtos == null || casesInterfacDtos.size() == 0){
-                return ResCode.C1008;
+                return ResCode.C0;
             }
             for(CasesInterfacDto casesInterfacDto: casesInterfacDtos){
                 int code = casesInterfacAssertService.deleteByCasesInterfacId(casesInterfacDto.getId(), messageMap, request);
@@ -161,8 +191,8 @@ public class CasesInterfacService {
 
     /** 校验请求信息内容是否合法 */
     private static boolean checkRequestInformation(CasesInterfac casesInterfac){
-        if(!casesInterfac.getMethodType().equals(GloryRoadEnum.CaseSubMethod.POST)
-                 && casesInterfac.getBodyType() != null){
+        if(!casesInterfac.getMethodType().equals(GloryRoadEnum.CaseSubMethod.GET)
+                && casesInterfac.getBodyType() == null){
             return false;
         }
         if(casesInterfac.getStepNum() == null){

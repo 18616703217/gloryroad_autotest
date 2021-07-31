@@ -46,9 +46,8 @@ public class ReportCaseService {
     }
 
     /** 报告用例信息插入 */
-    public int insertReportCasess(List<ReportCaseDto> reportCaseDtos, Map<String, String> messageMap, HttpServletRequest request){
-        String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("insert ip {} reportCaseDtos {}", ip, JSON.toJSONString(reportCaseDtos));
+    public int insertReportCasess(List<ReportCaseDto> reportCaseDtos, Map<String, String> messageMap){
+        LOGGER.info("insert reportCaseDtos {}", JSON.toJSONString(reportCaseDtos));
         Integer newId;
         if(reportCaseDtos == null
                 || reportCaseDtos.size() == 0){
@@ -59,12 +58,11 @@ public class ReportCaseService {
         try {
             for(ReportCaseDto reportCaseDto: reportCaseDtos) {
                 newId = reportCaseDao.insertReportCase(reportCaseDto);
-                
                 for(ReportInterfac reportInterfac: reportCaseDto.getReportInterfacs()){
                     reportInterfac.setReportCaseId(newId);
                 }
 
-                int code = reportInterfacService.insertReportInterfacs(reportCaseDto.getReportInterfacs(), messageMap, request);
+                int code = reportInterfacService.insertReportInterfacs(reportCaseDto.getReportInterfacs(), messageMap);
 
                 if(code != ResCode.C0){
                     return ResCode.C1008;
@@ -96,25 +94,23 @@ public class ReportCaseService {
     }
 
     /** 通过报告用例id报告用例信息删除 */
-    public int deleteByReportId(Integer[] reportBasicIds, Map<String, String> messageMap, HttpServletRequest request){
+    public int deleteByReportId(Integer reportBasicId, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("find ip {} reportBasicIds {}", ip, reportBasicIds);
-        for(Integer reportBasicId: reportBasicIds){
-            List<ReportCaseDto> reportCaseDtos = reportCaseDao.getByReportId(reportBasicId);
-            if(reportCaseDtos == null || reportCaseDtos.size() == 0){
-                return ResCode.C1008;
+        LOGGER.info("find ip {} reportBasicIds {}", ip, reportBasicId);
+        List<ReportCaseDto> reportCaseDtos = reportCaseDao.getByReportId(reportBasicId);
+        if(reportCaseDtos == null || reportCaseDtos.size() == 0){
+            return ResCode.C0;
+        }
+        for(ReportCaseDto reportCaseDto: reportCaseDtos){
+            int code = reportInterfacService.deleteByReportCaseId(reportCaseDto.getId(), messageMap, request);
+            if(code != ResCode.C0){
+                return code;
             }
-            for(ReportCaseDto reportCaseDto: reportCaseDtos){
-                int code = reportInterfacService.deleteByReportCaseId(reportCaseDto.getId(), messageMap, request);
-                if(code != ResCode.C0){
-                    return code;
-                }
-            }
-            int actionNum = reportCaseDao.deleteByReportId(reportBasicId);
-            if(actionNum == 0){
-                messageMap.put("errmsg", "删除报告用例失败");
-                return ResCode.C1008;
-            }
+        }
+        int actionNum = reportCaseDao.deleteByReportId(reportBasicId);
+        if(actionNum == 0){
+            messageMap.put("errmsg", "删除报告用例失败");
+            return ResCode.C1008;
         }
 
         return ResCode.C0;

@@ -40,9 +40,8 @@ public class ReportInterfacService {
     }
 
     /** 报告详情信息插入 */
-    public int insertReportInterfacs(List<ReportInterfac> reportInterfacs, Map<String, String> messageMap, HttpServletRequest request){
-        String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("insert ip {} reportInterfacs {}", ip, JSON.toJSONString(reportInterfacs));
+    public int insertReportInterfacs(List<ReportInterfac> reportInterfacs, Map<String, String> messageMap){
+        LOGGER.info("insert reportInterfacs {}", JSON.toJSONString(reportInterfacs));
 
         if(reportInterfacs == null
                 || reportInterfacs.size() == 0){
@@ -54,7 +53,6 @@ public class ReportInterfacService {
                 messageMap.put("errmsg", "参数有误，主键id非空");
                 return ResCode.C1002;
             }
-            reportInterfac.setRunState(GloryRoadEnum.RunStatus.TO_BE_EXEC);
         }
         try {
             if(reportInterfacDao.insertReportInterfacs(reportInterfacs) == reportInterfacs.size()){

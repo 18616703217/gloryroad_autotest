@@ -5,6 +5,7 @@ import com.gloryroad.demo.Vo.task.TaskBasicQueryVo;
 import com.gloryroad.demo.dto.TaskBasicDto;
 import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.task.TaskBasic;
+import com.gloryroad.demo.utils.TimesUtil;
 import com.google.common.base.Joiner;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +93,7 @@ public class TaskBasicDao {
     public int deleteTaskBasics(Integer[] ids){
 
         String sql = "update task_basic set status=1 where id in (%s);";
-        String.format(sql, Joiner.on(',').join(ids));
+        sql = String.format(sql, Joiner.on(',').join(ids));
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -110,7 +111,8 @@ public class TaskBasicDao {
             taskBasic.setCreateAccount((String) map.get("create_account"));
             taskBasic.setTaskName((String) map.get("task_name"));
             taskBasic.setStatus((Integer) map.get("status"));
-            taskBasic.setCreateTime((long) map.get("createTime"));
+            taskBasic.setCreateTime((Integer) map.get("createTime"));
+            taskBasic.setCreateDate(TimesUtil.timeStamp2Date((Integer) map.get("createTime"), null));
             taskBasic.setRemark((String) map.get("remark"));
             taskBasic.setGroupId((Integer) map.get("group_id"));
             taskBasics.add(taskBasic);

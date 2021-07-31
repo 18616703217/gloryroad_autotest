@@ -12,6 +12,7 @@ import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,14 @@ public class CasesInterfacDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    // 查询接口信息通过id
+    public List<CasesInterfacDto> getById(Integer id){
+        String sql = String.format("SELECT * FROM cases_interfac where id = %s and status = 0;", id);
+        List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
+        List<CasesInterfacDto> casesInterfacDtos = mappingObject(list);
+        return casesInterfacDtos;
+    }
 
     // 查询接口信息通过用例id
     public List<CasesInterfacDto> getCasesInterfacByCaeseId(Integer casesId){
@@ -42,24 +52,24 @@ public class CasesInterfacDao {
     // 插入接口信息
     public int insertInterfacBasic(CasesInterfacDto casesInterfac) {
 
-        String sql = "insert into cases_interfac(iterfac_name, remark, step_num, cases_id, create_account, method_type, body_type," +
+        String sql = "insert into cases_interfac(interfac_name, remark, step_num, cases_id, create_account, method_type, body_type," +
                 "interfac_form_data, interfac_json_data, interfac_query_data, interfac_header_data, url, createTime) " +
-                "values('%s','%s', %s, %s, %s,'%s','%s','%s','%s','%s','%s','%s','%s',%s)";
+                "values('%s','%s', %s, %s, '%s','%s','%s','%s','%s','%s','%s','%s',%s)";
         String finalSql = String.format(sql, casesInterfac.getInterfacName(), casesInterfac.getRemark(),
                 casesInterfac.getStepNum(), casesInterfac.getCasesId(),
                 casesInterfac.getCreateAccount(), casesInterfac.getMethodType().getValue(),
                 casesInterfac.getBodyType().getValue(), casesInterfac.getInterfacFormData().toJSONString(),
                 casesInterfac.getInterfacJsonData().toJSONString(), casesInterfac.getInterfacQueryData().toJSONString(),
-                casesInterfac.getInterfacHeaderData().toJSONString(), casesInterfac.getCreateTime());
+                casesInterfac.getInterfacHeaderData().toJSONString(), casesInterfac.getUrl(),
+                casesInterfac.getCreateTime());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
-
             @Override
             public PreparedStatement createPreparedStatement(Connection conn)
                     throws SQLException {
-
-                return conn.prepareStatement(finalSql);
+                PreparedStatement ps = conn.prepareStatement(finalSql,Statement.RETURN_GENERATED_KEYS);
+                return ps;
 
             }
         },keyHolder);
@@ -101,10 +111,10 @@ public class CasesInterfacDao {
     }
 
     // 删除接口信息
-    public int deleteCasesInterfacs(Integer[] ids){
+    public int deleteCasesInterfacs(Integer id){
 
-        String sql = "update cases_interfac set status=1 where id in (%s);";
-        String.format(sql, Joiner.on(',').join(ids));
+        String sql = "update cases_interfac set status=1 where id = %s;";
+        sql = String.format(sql, id);
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -133,10 +143,10 @@ public class CasesInterfacDao {
             casesInterfacDto.setCreateAccount((String) map.get("create_account"));
             casesInterfacDto.setMethodType(GloryRoadEnum.CaseSubMethod.getCaseSubMethod((String) map.get("method_type")));
             casesInterfacDto.setBodyType(GloryRoadEnum.CaseBodyType.getCaseBodyType((String) map.get("body_type")));
-            casesInterfacDto.setInterfacFormData((JSONObject) map.get("interfac_form_data"));
-            casesInterfacDto.setInterfacJsonData((JSONObject) map.get("interfac_json_data"));
-            casesInterfacDto.setInterfacQueryData((JSONObject) map.get("interfac_query_data"));
-            casesInterfacDto.setInterfacHeaderData((JSONObject) map.get("interfac_header_data"));
+            casesInterfacDto.setInterfacFormData(JSONObject.parseObject((String) map.get("interfac_form_data")));
+            casesInterfacDto.setInterfacJsonData(JSONObject.parseObject((String) map.get("interfac_json_data")));
+            casesInterfacDto.setInterfacQueryData(JSONObject.parseObject((String) map.get("interfac_query_data")));
+            casesInterfacDto.setInterfacHeaderData(JSONObject.parseObject((String) map.get("interfac_header_data")));
             casesInterfacDto.setCreateTime((Integer) map.get("createTime"));
             casesInterfacDto.setStatus((Integer) map.get("status"));
             casesInterfacDtos.add(casesInterfacDto);

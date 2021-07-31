@@ -11,10 +11,14 @@ import com.gloryroad.demo.dao.task.TaskBasicDao;
 import com.gloryroad.demo.dto.TaskBasicDto;
 import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
+import com.gloryroad.demo.entity.session.IUser;
 import com.gloryroad.demo.entity.task.TaskBasic;
+import com.gloryroad.demo.service.cases.CasesBasicService;
 import com.gloryroad.demo.service.interfac.InterfacAssertService;
 import com.gloryroad.demo.service.system.SystemGroupService;
 import com.gloryroad.demo.utils.IpUtil;
+import com.gloryroad.demo.utils.TimesUtil;
+import com.gloryroad.demo.utils.session.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,12 @@ public class TaskBasicService {
 
     @Autowired
     private SystemGroupService systemGroupService;
+
+    @Autowired
+    private CasesBasicService casesBasicService;
+
+    @Autowired
+    private UserUtil userUtil;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskBasicService.class);
 
@@ -51,8 +61,8 @@ public class TaskBasicService {
 
         for(TaskBasicDto taskBasicDto: taskBasicDtos){
             taskBasicDto.setGroupName(systemGroupService.findSystemGroupById(taskBasicDto.getGroupId()).getGroupName());
+            taskBasicDto.setCasesBasicList(casesBasicService.findCasesBasics(taskBasicDto.getCasesIds()));
         }
-
         page.setResult(taskBasicDtos);
         return page;
     }
@@ -60,17 +70,17 @@ public class TaskBasicService {
     /** 任务信息插入 */
     public int insertTaskBasics(TaskBasic taskBasic, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
+        IUser user = userUtil.getUserSession(request);
         LOGGER.info("insert ip {} taskBasic {}", ip, JSON.toJSONString(taskBasic));
 
         if(taskBasic == null
                 || taskBasic.getTaskName() == null
-                || taskBasic.getGroupId() == null
-                || taskBasic.getCreateAccount() == null){
+                || taskBasic.getGroupId() == null){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-
-        taskBasic.setCreateTime(System.currentTimeMillis());
+        taskBasic.setCreateAccount(user.getAccount());
+        taskBasic.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(taskBasicDao.insertTaskBasic(taskBasic) == 1){
             return ResCode.C0;
         }
@@ -88,7 +98,8 @@ public class TaskBasicService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
-        taskBasic.setCreateTime(System.currentTimeMillis());
+
+        taskBasic.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         if(taskBasicDao.updateTaskBasic(taskBasic) == 1){
             return ResCode.C0;
         }

@@ -6,7 +6,10 @@ import com.gloryroad.demo.dao.cases.CasesInterfacAssertDao;
 import com.gloryroad.demo.dao.interfac.InterfacAssertDao;
 import com.gloryroad.demo.entity.cases.CasesInterfacAssert;
 import com.gloryroad.demo.entity.interfac.InterfacAssert;
+import com.gloryroad.demo.entity.session.IUser;
 import com.gloryroad.demo.utils.IpUtil;
+import com.gloryroad.demo.utils.TimesUtil;
+import com.gloryroad.demo.utils.session.UserUtil;
 import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +27,18 @@ public class CasesInterfacAssertService {
     @Autowired
     private CasesInterfacAssertDao casesInterfacAssertDao;
 
+    @Autowired
+    private UserUtil userUtil;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CasesInterfacAssertService.class);
 
     /** 接口断言信息查找 */
     public List<CasesInterfacAssert> findCasesInterfacAsserts(Integer casesInterfacId, HttpServletRequest request){
-        String ip = IpUtil.getIpAddr(request);
+        String ip = "";
+        if(request == null){
+            ip = IpUtil.getIpAddr(request);
+        }
+
         LOGGER.info("find ip {} casesInterfacId {}", ip, casesInterfacId);
         List<CasesInterfacAssert> casesInterfacAsserts = Lists.newArrayList();
         if(casesInterfacId == null){
@@ -41,6 +51,7 @@ public class CasesInterfacAssertService {
     /** 接口断言信息插入 */
     public int insertCasesInterfacAsserts(List<CasesInterfacAssert> casesInterfacAsserts, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
+        IUser user = userUtil.getUserSession(request);
         LOGGER.info("insert ip {} casesInterfacAsserts {}", ip, JSON.toJSONString(casesInterfacAsserts));
 
         if(casesInterfacAsserts == null
@@ -48,13 +59,16 @@ public class CasesInterfacAssertService {
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
         }
+
         for(CasesInterfacAssert casesInterfacAssert: casesInterfacAsserts) {
-            if(casesInterfacAssert.getId() != null){
-                messageMap.put("errmsg", "参数有误，主键id非空");
+            if(casesInterfacAssert.getInterfacId() == null){
+                messageMap.put("errmsg", "参数有误，关联用例接口id为空");
                 return ResCode.C1002;
             }
-            casesInterfacAssert.setCreateTime(System.currentTimeMillis());
+            casesInterfacAssert.setCreateTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
+            casesInterfacAssert.setCreateAccount(user.getAccount());
         }
+
         try {
             if(casesInterfacAssertDao.insertCasesInterfacAsserts(casesInterfacAsserts) == casesInterfacAsserts.size()){
                 return ResCode.C0;
@@ -74,6 +88,12 @@ public class CasesInterfacAssertService {
         if(casesInterfacAsserts == null || casesInterfacAsserts.size() == 0){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
+        }
+        for(CasesInterfacAssert casesInterfacAssert: casesInterfacAsserts) {
+            if(casesInterfacAssert.getId() == null){
+                messageMap.put("errmsg", "参数有误，主键为空");
+                return ResCode.C1002;
+            }
         }
         try {
             if(casesInterfacAssertDao.updateCasesInterfacAsserts(casesInterfacAsserts) == casesInterfacAsserts.size()){
@@ -113,6 +133,10 @@ public class CasesInterfacAssertService {
         if(casesInterfacId==null){
             messageMap.put("errmsg", "参数缺失");
             return ResCode.C1001;
+        }
+
+        if(casesInterfacAssertDao.getCasesInterfacAssertsByCasesInterfacId(casesInterfacId).size() == 0){
+            return ResCode.C0;
         }
 
         if(casesInterfacAssertDao.deleteByCasesInterfacId(casesInterfacId) > 0){

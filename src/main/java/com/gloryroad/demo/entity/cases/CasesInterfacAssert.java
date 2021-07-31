@@ -7,7 +7,7 @@ public class CasesInterfacAssert {
     private Integer id;
 
     /** 接口id */
-    private Integer casesInterfacId;
+    private Integer interfacId;
 
     /** 断言位置 */
     private GloryRoadEnum.AssertPosition assertPosition;
@@ -32,12 +32,12 @@ public class CasesInterfacAssert {
         this.id = id;
     }
 
-    public Integer getCasesInterfacId() {
-        return casesInterfacId;
+    public Integer getInterfacId() {
+        return interfacId;
     }
 
-    public void setCasesInterfacId(Integer casesInterfacId) {
-        this.casesInterfacId = casesInterfacId;
+    public void setInterfacId(Integer interfacId) {
+        this.interfacId = interfacId;
     }
 
     public GloryRoadEnum.AssertPosition getAssertPosition() {

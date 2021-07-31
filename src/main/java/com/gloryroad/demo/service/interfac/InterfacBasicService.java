@@ -10,9 +10,11 @@ import com.gloryroad.demo.dao.interfac.InterfacBasicDao;
 import com.gloryroad.demo.dto.interfac.InterfacBasicDto;
 import com.gloryroad.demo.entity.interfac.InterfacAssert;
 import com.gloryroad.demo.entity.interfac.InterfacBasic;
+import com.gloryroad.demo.entity.session.IUser;
 import com.gloryroad.demo.service.system.SystemGroupService;
 import com.gloryroad.demo.utils.IpUtil;
 import com.gloryroad.demo.utils.TimesUtil;
+import com.gloryroad.demo.utils.session.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +32,12 @@ public class InterfacBasicService {
 
     @Autowired
     private SystemGroupService systemGroupService;
+
     @Autowired
     private InterfacAssertService interfacAssertService;
+
+    @Autowired
+    private UserUtil userUtil;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfacBasicService.class);
 
@@ -57,8 +63,9 @@ public class InterfacBasicService {
     /** 接口信息插入 */
     public int insertInterfacBasics(InterfacBasic interfacBasic, Map<String, String> messageMap, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
+        IUser user = userUtil.getUserSession(request);
         LOGGER.info("insert ip {} InterfacBasic {}", ip, JSON.toJSONString(interfacBasic));
-
+        interfacBasic.setCreateAccount(user.getAccount());
         if(interfacBasic == null
                 || interfacBasic.getInterfacName() == null
                 || interfacBasic.getGroupId() == null

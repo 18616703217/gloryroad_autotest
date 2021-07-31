@@ -23,9 +23,11 @@ import java.lang.invoke.MethodType;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
-public class TaskActionService {
+public class TaskActionService{
     @Autowired
     private TaskActionDetailService taskActionDetailService;
 
@@ -34,16 +36,16 @@ public class TaskActionService {
 
 
     /** 执行任务入口 */
-    public ReportBasicDto actonMain(HttpServletRequest request){
-        EngineActionBasic engineActionBasic = taskActionDetailService.getTaskAction(request);
+    public void actionMain(){
+        EngineActionBasic engineActionBasic = taskActionDetailService.getTaskAction();
         if(engineActionBasic == null){
-            return null;
+            return;
         }
 
-        List<CasesBasicDto> casesBasicDtos = taskActionDetailService.getTaskActionContent(engineActionBasic, request);
+        List<CasesBasicDto> casesBasicDtos = taskActionDetailService.getTaskActionContent(engineActionBasic);
 
         if(casesBasicDtos == null){
-            return null;
+            return;
         }
 
         ReportBasicDto reportBaseDto = new ReportBasicDto();
@@ -51,9 +53,8 @@ public class TaskActionService {
         List<String> errmsgs = Lists.newArrayList();
 
         reportBaseDto.setReportName(String.format("任务%s-%s", engineActionBasic.getId(), TimesUtil.nowDateToYMD()));
-        reportBaseDto.setCreateTime(System.currentTimeMillis());
         reportBaseDto.setTaskId(engineActionBasic.getId().toString());
-        reportBaseDto.setStartTime(System.currentTimeMillis());
+        reportBaseDto.setStartTime(TimesUtil.millisecondToSecond(System.currentTimeMillis()));
         reportBaseDto.setGroupId(engineActionBasic.getGroupId());
         reportBaseDto.setExecutionEnv("");
         reportBaseDto.setCreateAccount(engineActionBasic.getCreateAccount());
@@ -69,22 +70,31 @@ public class TaskActionService {
             for(CasesInterfacDto casesInterfacDto: casesBasicDto.getCasesInterfacDtos()){
                 OKHttpUtil okHttpUtil = OKHttpUtil.getInstance();
                 ReportInterfac reportInterfac = new ReportInterfac();
+                reportInterfac.setCasesInterfacId(casesInterfacDto.getId());
+                reportInterfac.setMethodType(casesInterfacDto.getMethodType());
                 reportInterfac.setUrl(casesInterfacDto.getUrl());
                 reportInterfac.setRemark(casesInterfacDto.getRemark());
                 reportInterfac.setInterfacName(casesInterfacDto.getInterfacName());
                 reportInterfac.setStepNum(casesInterfacDto.getStepNum());
-                reportInterfac.setAsserts(JSONObject.toJSONString(casesInterfacDto.getCasesInterfacAsserts()));
-                reportInterfac.setHeaders(casesInterfacDto.getInterfacHeaderData());
-                reportInterfac.setJsons(casesInterfacDto.getInterfacJsonData());
-                reportInterfac.setQueryDatas(casesInterfacDto.getInterfacQueryData());
-                reportInterfac.setForms(casesInterfacDto.getInterfacFormData());
+                reportInterfac.setAsserts(JSONObject.toJSONString(casesInterfacDto.getInterfacAsserts()));
+                reportInterfac.setHeaders(JSONObject.toJSONString(casesInterfacDto.getInterfacHeaderData()));
+                reportInterfac.setJsons(JSONObject.toJSONString(casesInterfacDto.getInterfacJsonData()));
+                reportInterfac.setQueryDatas(JSONObject.toJSONString(casesInterfacDto.getInterfacQueryData()));
+                reportInterfac.setForms(JSONObject.toJSONString(casesInterfacDto.getInterfacFormData()));
 
                 String responesString = null;
 
-                casesInterfacDto.setInterfacFormData(actonHandleParamsMain(casesInterfacDto.getInterfacFormData()));
-                casesInterfacDto.setInterfacJsonData(actonHandleParamsMain(casesInterfacDto.getInterfacJsonData()));
-                casesInterfacDto.setInterfacQueryData(actonHandleParamsMain(casesInterfacDto.getInterfacQueryData()));
+                // 请求上下文数据替换
+                casesInterfacDto.setInterfacFormData(actonHandleParamsMain(casesInterfacDto.getInterfacFormData(),
+                        engineActionBasic.getId(), casesBasicDto.getId()));
+                casesInterfacDto.setInterfacJsonData(actonHandleParamsMain(casesInterfacDto.getInterfacJsonData(),
+                        engineActionBasic.getId(), casesBasicDto.getId()));
+                casesInterfacDto.setInterfacQueryData(actonHandleParamsMain(casesInterfacDto.getInterfacQueryData(),
+                        engineActionBasic.getId(), casesBasicDto.getId()));
+                casesInterfacDto.setInterfacHeaderData(actonHandleParamsMain(casesInterfacDto.getInterfacHeaderData(),
+                        engineActionBasic.getId(), casesBasicDto.getId()));
 
+                // 发送请求
                 if(casesInterfacDto.getMethodType() == GloryRoadEnum.CaseSubMethod.GET){
 
                     responesString = okHttpUtil.doGet(casesInterfacDto.getUrl(), casesInterfacDto.getInterfacQueryData());
@@ -104,10 +114,11 @@ public class TaskActionService {
                 reportInterfac.setResponse(responesString);
 
                 Map<String, String> message = Maps.newHashMap();
-                int code = actonAssertMain(responesString, casesInterfacDto.getCasesInterfacAsserts(), message);
+                int code = actonAssertMain(responesString, casesInterfacDto.getInterfacAsserts(), message);
 
                 if(code != ResCode.C0){
                     reportInterfac.setRunState(GloryRoadEnum.RunStatus.EXE_FAILD);
+                    reportCaseDto.setRunState(GloryRoadEnum.RunStatus.EXE_FAILD);
                     errmsgs.add(message.get("errmsg"));
                     reportInterfacs.add(reportInterfac);
                     break;
@@ -120,21 +131,82 @@ public class TaskActionService {
                 reportInterfac.setRunState(GloryRoadEnum.RunStatus.EXE_SUCESS);
                 reportInterfacs.add(reportInterfac);
             }
+
+            // 最终结果写入
             reportCaseDto.setReportInterfacs(reportInterfacs);
+            reportCaseDto.setRunState(GloryRoadEnum.RunStatus.EXE_SUCESS);
+            reportCaseDtos.add(reportCaseDto);
         }
+        reportBaseDto.setReportCaseDtos(reportCaseDtos);
 
         Map<String, String> messageMap = Maps.newHashMap();
-        reportBasicService.insertReportBasic(reportBaseDto, messageMap, request);
-        return reportBaseDto;
+        reportBasicService.insertReportBasic(reportBaseDto, messageMap);
     }
 
     /** 执行断言入口 */
     public int actonAssertMain(String responesString, List<CasesInterfacAssert> asserts, Map<String, String> message){
+        if(responesString == null){
+            return ResCode.A1001;
+        }
+
+        if(asserts == null || asserts.size() == 0){
+            return ResCode.C0;
+        }
+
+        for(CasesInterfacAssert casesInterfacAssert: asserts){
+            if(casesInterfacAssert.getAssertPosition() == GloryRoadEnum.AssertPosition.BODY){
+                if(! responesString.contains(casesInterfacAssert.getAssertContent())){
+                    return ResCode.A1001;
+                }
+            }
+        }
+
         return ResCode.C0;
     }
 
     /** 参数处理 */
-    public JSONObject actonHandleParamsMain(JSONObject params){
-        return params;
+    public JSONObject actonHandleParamsMain(JSONObject params, Integer taskId, Integer caseId){
+
+        if(params.isEmpty()){
+            return params;
+        }
+
+        String paramsPattern = "\\$(.+)\\$";
+        String responsePattern = "";
+        Integer stepNum;
+        String paramsString = params.toJSONString();
+
+        Pattern parmp = Pattern.compile(paramsPattern);
+        Matcher parmm = parmp.matcher(paramsString);
+
+        Pattern resp = null;
+        Matcher resm = null;
+
+        String replaceData;
+        // 查找参数中需要替换的数据
+        while (parmm.find()){
+            String[] inputResult = parmm.group(1).split("-");
+            try{
+                stepNum = Integer.valueOf(inputResult[0]);
+            }catch (Exception e){
+                return JSONObject.parseObject(paramsString);
+            }
+
+            String response = taskActionDetailService.getTaskRunCache(taskId, caseId, stepNum);
+
+            responsePattern = inputResult[1];
+            resp = Pattern.compile(responsePattern);
+            resm = resp.matcher(response);
+
+            // 最终替换
+            if(resm.find()){
+                replaceData = resm.group();
+                paramsString = parmm.replaceFirst(replaceData);
+            }
+
+        }
+
+        return JSONObject.parseObject(paramsString);
     }
+
 }

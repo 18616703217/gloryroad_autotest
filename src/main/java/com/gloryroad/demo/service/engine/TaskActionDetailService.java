@@ -37,9 +37,7 @@ public class TaskActionDetailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskActionDetailService.class);
 
     /** 执行任务内容获取 */
-    public EngineActionBasic getTaskAction(HttpServletRequest request){
-        String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("getTaskAction ip {}", ip);
+    public EngineActionBasic getTaskAction(){
 
         EngineActionBasic engineActionBasic = engineActionBasicDao.getEngineActionBasic();
         if(engineActionBasic == null){
@@ -68,15 +66,13 @@ public class TaskActionDetailService {
     }
 
     /** 执行任务内容获取 */
-    public List<CasesBasicDto> getTaskActionContent(EngineActionBasic engineActionBasic, HttpServletRequest request){
-        String ip = IpUtil.getIpAddr(request);
-        LOGGER.info("getTaskActionContent ip {}", ip);
+    public List<CasesBasicDto> getTaskActionContent(EngineActionBasic engineActionBasic){
 
         List<CasesBasicDto> casesBasicDtos = null;
 
         /* 任务内容详情获取 */
         List<String> casesIds = engineActionBasic.getCasesIds();
-        casesBasicDtos = casesBasicService.findCasesBasics(casesIds, request);
+        casesBasicDtos = casesBasicService.findCasesBasicDtos(casesIds);
 
         return casesBasicDtos;
     }
@@ -97,6 +93,7 @@ public class TaskActionDetailService {
             messageMap.put("errmsg", "任务开始失败");
             return ResCode.C1008;
         }
+        engineActionBasicDao.insertTaskHash(engineActionBasic.getId(), engineActionBasic);
         return ResCode.C0;
     }
 
@@ -115,7 +112,7 @@ public class TaskActionDetailService {
             messageMap.put("errmsg", "删除任务执行失败");
             return ResCode.C1008;
         }
-
+        engineActionBasicDao.deleteTaskHash(taskId);
         return ResCode.C0;
     }
 

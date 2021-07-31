@@ -14,7 +14,7 @@ public class CasesInterfac {
     /** 接口名称 */
     private String interfacName;
     /** 接口说明 */
-    private String remark;
+    private String remark = "";
     /** 创建账户 */
     private String createAccount;
     /** url */
@@ -25,13 +25,13 @@ public class CasesInterfac {
     /** 请求主体 */
     private GloryRoadEnum.CaseBodyType bodyType;
     /** 请求header数据 */
-    private JSONObject interfacHeaderData;
+    private JSONObject interfacHeaderData = new JSONObject();
     /** 请求form数据 */
-    private JSONObject interfacFormData;
+    private JSONObject interfacFormData = new JSONObject();
     /** 请求query数据 */
-    private JSONObject interfacQueryData;
+    private JSONObject interfacQueryData = new JSONObject();
     /** 请求json数据 */
-    private JSONObject interfacJsonData;
+    private JSONObject interfacJsonData = new JSONObject();
 
     /** 状态 */
     private Integer status;

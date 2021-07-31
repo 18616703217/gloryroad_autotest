@@ -16,7 +16,7 @@ public class ReportBasic {
 
     private String reportName;
 
-    private String executionEnv;
+    private String executionEnv = "";
 
     private long startTime;
 
@@ -26,7 +26,7 @@ public class ReportBasic {
     private GloryRoadEnum.TaskStatus taskStatus;
 
     /** 失败原因 */
-    private String errMsg;
+    private String errMsg = "";
 
     private long createTime;
 

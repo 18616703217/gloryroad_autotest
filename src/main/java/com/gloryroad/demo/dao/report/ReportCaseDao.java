@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class ReportCaseDao {
 
     // 查询报告用例信息通过报告id
     public List<ReportCaseDto> getByReportId(Integer reportId){
-        String sql = String.format("SELECT * FROM report_case where report_id = %s and status = 0;", reportId);
+        String sql = String.format("SELECT * FROM report_cases where report_base_Id = %s and status = 0;", reportId);
         List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
         System.out.println(list);
         List<ReportCaseDto> reportCaseDtos = mappingObject(list);
@@ -52,7 +53,7 @@ public class ReportCaseDao {
             public PreparedStatement createPreparedStatement(Connection conn)
                     throws SQLException {
 
-                return conn.prepareStatement(finalSql);
+                return conn.prepareStatement(finalSql, Statement.RETURN_GENERATED_KEYS);
 
             }
         },keyHolder);
@@ -87,7 +88,7 @@ public class ReportCaseDao {
 
     // 删除报告用例信息通过用例id
     public int deleteByReportId(Integer reportId){
-        String sql = String.format("update report_cases set status=1 where report_id = %s and status = 0;", reportId);
+        String sql = String.format("update report_cases set status=1 where report_base_Id = %s and status = 0;", reportId);
         int actionNum = jdbcTemplate.update(sql);
         System.out.println(sql);
         return actionNum;

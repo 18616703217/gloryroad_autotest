@@ -109,4 +109,13 @@ public class ResCode {
      * 导出数据
      */
     public static final int P256 = 256;
+
+    /**
+     * 断言成功
+     */
+    public static final int A1000 = 1000;
+    /**
+     * 断言失败
+     */
+    public static final int A1001 = 1001;
 }

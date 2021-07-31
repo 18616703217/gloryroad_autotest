@@ -8,10 +8,7 @@ import com.gloryroad.demo.service.engine.TaskActionDetailService;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -24,7 +21,7 @@ public class TaskActionController extends BaseController{
 
     @RequestMapping(value = "",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseModel taskActionMain(EngineActionBasic engineActionBasic, HttpServletRequest request) {
+    public ResponseModel taskActionMain(@RequestBody EngineActionBasic engineActionBasic, HttpServletRequest request) {
         Map<String, String> messageMap = Maps.newHashMap();
 
         int code = taskActionService.insertTaskAction(request, engineActionBasic, messageMap);

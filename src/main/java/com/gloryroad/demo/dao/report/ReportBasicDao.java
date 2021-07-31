@@ -7,6 +7,7 @@ import com.gloryroad.demo.dto.cases.CasesBasicDto;
 import com.gloryroad.demo.dto.report.ReportBasicDto;
 import com.gloryroad.demo.entity.cases.CasesBasic;
 import com.gloryroad.demo.entity.report.ReportBasic;
+import com.gloryroad.demo.utils.TimesUtil;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +81,7 @@ public class ReportBasicDao {
             public PreparedStatement createPreparedStatement(Connection conn)
                     throws SQLException {
 
-                return conn.prepareStatement(finalSql);
+                return conn.prepareStatement(finalSql, Statement.RETURN_GENERATED_KEYS);
 
             }
         },keyHolder);
@@ -109,10 +111,10 @@ public class ReportBasicDao {
     }
 
     // 删除用例信息
-    public int deleteReportBasics(Integer[] ids){
+    public int deleteReportBasics(Integer id){
 
-        String sql = "update report_basic set status=1 where id in (%s);";
-        String.format(sql, Joiner.on(',').join(ids));
+        String sql = "update report_basic set status=1 where id = %s;";
+        sql = String.format(sql, id);
         System.out.println(sql);
         int actionNum = jdbcTemplate.update(sql);
 
@@ -125,16 +127,18 @@ public class ReportBasicDao {
         for(Map<String,Object> map: list){
             ReportBasicDto reportBasicDto = new ReportBasicDto();
             reportBasicDto.setId((Integer) map.get("id"));
-            reportBasicDto.setReportName((String) map.get("case_name"));
+            reportBasicDto.setReportName((String) map.get("report_name"));
             reportBasicDto.setTaskId((String) map.get("task_id"));
             reportBasicDto.setGroupId((Integer) map.get("group_id"));
-            reportBasicDto.setEndTime((long) map.get("end_time"));
             reportBasicDto.setErrMsg((String) map.get("err_msg"));
             reportBasicDto.setExecutionEnv((String) map.get("execution_env"));
             reportBasicDto.setTaskStatus(GloryRoadEnum.TaskStatus.getTaskStatus((String) map.get("task_status")));
-            reportBasicDto.setStartTime((long) map.get("start_time"));
+            reportBasicDto.setStartTime((Integer) map.get("start_time"));
+            reportBasicDto.setEndTime((Integer) map.get("end_time"));
+            reportBasicDto.setStartDate(TimesUtil.timeStamp2Date((Integer) map.get("start_time"), null));
+            reportBasicDto.setEndDate(TimesUtil.timeStamp2Date((Integer) map.get("end_time"), null));
             reportBasicDto.setCreateAccount((String) map.get("create_account"));
-            reportBasicDto.setCreateTime((long) map.get("createTime"));
+            reportBasicDto.setCreateTime((Integer) map.get("createTime"));
             reportBasicDto.setStatus((Integer) map.get("status"));
             reportBasicDtos.add(reportBasicDto);
             System.out.println("casesBasicDto = " + reportBasicDto);
